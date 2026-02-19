@@ -313,6 +313,22 @@ ul, ol { list-style: none; }
 .table__actions .btn + .btn { margin-left: var(--space-2); }
 .text-right { text-align: right; }
 
+/* Project row status indicators */
+.project-row--awarded td:first-child { border-left: 3px solid var(--status-awarded); }
+.project-row--lost    td:first-child { border-left: 3px solid var(--status-lost); }
+.project-row--submitted td:first-child { border-left: 3px solid var(--status-submitted); }
+.project-row--drafting  td:first-child { border-left: 3px solid var(--status-in-progress); }
+.project-row--inactive  td:first-child { border-left: 3px solid var(--status-archived); }
+
+.project-row--awarded   td:first-child .link { color: var(--status-awarded); }
+.project-row--lost      td:first-child .link { color: var(--status-lost); }
+.project-row--submitted td:first-child .link { color: var(--status-submitted); }
+.project-row--drafting  td:first-child .link { color: var(--status-in-progress); }
+.project-row--inactive  td:first-child .link { color: var(--status-archived); }
+
+.bid-due--warning { color: var(--status-in-progress); font-weight: 500; }
+.bid-due--overdue { color: var(--status-lost); font-weight: 500; }
+
 /* ===========================================================
    9. FORMS
    =========================================================== */

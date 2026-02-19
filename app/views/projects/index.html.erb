@@ -10,6 +10,7 @@
         <tr>
           <th>Project Name</th>
           <th>Location</th>
+          <th>Bid Due</th>
           <th>Type</th>
           <th>Start Date</th>
           <th class="text-right">Bids</th>
@@ -18,7 +19,7 @@
       </thead>
       <tbody>
         <% @projects.each do |project| %>
-          <tr>
+          <tr class="<%= project.bid_status_class %>">
             <td>
               <%= link_to project.name, project_path(project), class: "link" %>
               <% if project.rebid_of_id? %>
@@ -26,7 +27,8 @@
               <% end %>
             </td>
             <td><%= project.location.presence || "—" %></td>
-            <td><%= project.project_type.presence || "—" %></td>
+            <td><% due = project.earliest_bid_due_at %><% urgency = project.bid_due_urgency_class %><span class="<%= urgency %>"><%= due ? due.strftime("%b %d, %Y") : "—" %></span></td>
+            <td><%= project.project_type.present? ? content_tag(:span, project.project_type, class: "tag") : "—" %></td>
             <td><%= project.estimated_start_date&.strftime("%b %d, %Y") || "—" %></td>
             <td class="text-right"><%= project.bid_submissions.kept.count %></td>
             <td class="table__actions">

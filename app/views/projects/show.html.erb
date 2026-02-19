@@ -16,7 +16,7 @@
     <% if @project.project_type.present? %>
       <div class="meta-item">
         <dt>Type</dt>
-        <dd><%= @project.project_type %></dd>
+        <dd><span class="tag"><%= @project.project_type %></span></dd>
       </div>
     <% end %>
     <% if @project.estimated_start_date.present? %>

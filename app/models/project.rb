@@ -11,6 +11,42 @@ class Project < ApplicationRecord
 
   scope :active, -> { kept }
 
+  def earliest_bid_due_at
+    bid_submissions.kept.minimum(:bid_due_at)
+  end
+
+  def bid_due_urgency_class
+    return nil unless bid_submissions.kept.drafting.any?
+
+    due = bid_submissions.kept.drafting.minimum(:bid_due_at)
+    return nil unless due
+
+    days = (due.to_date - Date.today).to_i
+    if days < 0
+      "bid-due--overdue"
+    elsif days <= 2
+      "bid-due--warning"
+    end
+  end
+
+  def bid_status_class
+    subs = bid_submissions.kept
+    return "project-row--drafting" if subs.none?
+
+    statuses = subs.pluck(:status)
+    if statuses.include?("awarded")
+      "project-row--awarded"
+    elsif statuses.all? { |s| %w[lost withdrawn declined].include?(s) } && statuses.any? { |s| s == "lost" }
+      "project-row--lost"
+    elsif statuses.any? { |s| %w[submitted].include?(s) }
+      "project-row--submitted"
+    elsif statuses.any? { |s| s == "drafting" }
+      "project-row--drafting"
+    else
+      "project-row--inactive"
+    end
+  end
+
   def duplicate_for_rebid
     dup.tap do |p|
       p.rebid_of_id = id
