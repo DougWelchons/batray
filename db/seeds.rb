@@ -484,7 +484,7 @@ puts "  Creating rebid projects..."
 
 all_projects = Project.all.to_a
 total_projects = all_projects.size
-rebid_count = (total_projects * 0.05).round
+rebid_count = 2
 
 # Candidates: projects that have at least one lost bid, no awarded bids, and are not already rebids
 already_rebound_ids = Project.where.not(rebid_of_id: nil).pluck(:rebid_of_id).compact
@@ -517,6 +517,9 @@ rebid_candidates.each_with_index do |original, i|
     estimated_start_date: Date.today + rand(45..180),
     rebid_of_id:          original.id
   )
+
+  # Backdate created_at so the rebid sorts near its source project, not clumped at the end
+  rebid.update_columns(created_at: original.created_at + rand(1..7).days)
 
   # Rebid gets fresh drafting bids mirroring original GCs
   gc_list    = original.bid_submissions.map(&:contractor).uniq
@@ -567,6 +570,9 @@ if created_rebids.any?
       rebid_of_id:          second_gen.id
     )
 
+    # Backdate so it sorts near the second-gen project
+    third_gen.update_columns(created_at: second_gen.created_at + rand(1..7).days)
+
     gc_list    = second_gen.bid_submissions.map(&:contractor).uniq
     bid_due_at = Date.today + rand(10..25)
 
@@ -587,7 +593,7 @@ if created_rebids.any?
   end
 end
 
-puts "    #{created_rebids.size + 1} rebid projects created (including 3rd-round chain)"
+puts "    #{Project.where.not(rebid_of_id: nil).count} rebid projects created (including 3rd-round chain)"
 
 # ============================================================
 # Summary
