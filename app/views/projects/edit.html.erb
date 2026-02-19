@@ -1,0 +1,7 @@
+<% content_for :page_title, "Edit: #{@project.name}" %>
+
+<div class="card">
+  <% @contractors = Contractor.order(:name) %>
+  <% @users = User.order(:name) %>
+  <%= render "form", project: @project %>
+</div>

@@ -1,0 +1,31 @@
+<% content_for :page_title, "Users" %>
+<% content_for :header_actions do %>
+  <%= link_to "New User", new_admin_user_path, class: "btn btn--primary" %>
+<% end %>
+
+<div class="card">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Role</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @users.each do |user| %>
+        <tr>
+          <td><%= user.name %></td>
+          <td><%= user.email %></td>
+          <td><span class="tag"><%= user.role.humanize %></span></td>
+          <td class="table__actions">
+            <%= link_to "Edit", edit_admin_user_path(user), class: "btn btn--ghost btn--sm" %>
+            <%= button_to "Delete", admin_user_path(user), method: :delete, class: "btn btn--danger btn--sm",
+              data: { confirm: "Delete #{user.name}?" } if user != current_user %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

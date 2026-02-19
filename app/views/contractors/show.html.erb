@@ -1,0 +1,64 @@
+<% content_for :page_title, @contractor.name %>
+<% content_for :header_actions do %>
+  <%= link_to "Edit", edit_contractor_path(@contractor), class: "btn btn--secondary" %>
+<% end %>
+
+<div class="card">
+  <dl class="meta-list">
+    <% if @contractor.contact_name.present? %>
+      <div class="meta-item">
+        <dt>Contact</dt>
+        <dd><%= @contractor.contact_name %></dd>
+      </div>
+    <% end %>
+    <% if @contractor.email.present? %>
+      <div class="meta-item">
+        <dt>Email</dt>
+        <dd><%= mail_to @contractor.email, class: "link" %></dd>
+      </div>
+    <% end %>
+    <% if @contractor.phone.present? %>
+      <div class="meta-item">
+        <dt>Phone</dt>
+        <dd><%= @contractor.phone %></dd>
+      </div>
+    <% end %>
+    <% if @contractor.notes.present? %>
+      <div class="meta-item">
+        <dt>Notes</dt>
+        <dd><%= @contractor.notes %></dd>
+      </div>
+    <% end %>
+  </dl>
+</div>
+
+<div class="card">
+  <h2 class="card__title">Bid Submissions</h2>
+
+  <% if @bid_submissions.any? %>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Project</th>
+          <th>Status</th>
+          <th>Bid Date</th>
+          <th class="text-right">Submitted Value</th>
+          <th class="text-right">Awarded Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @bid_submissions.each do |bid| %>
+          <tr>
+            <td><%= link_to bid.project.name, project_path(bid.project), class: "link" %></td>
+            <td><%= status_badge(bid.status) %></td>
+            <td><%= bid.bid_submitted_at&.strftime("%b %d, %Y") || "—" %></td>
+            <td class="text-right"><%= currency(bid.submitted_value) %></td>
+            <td class="text-right"><%= bid.awarded? ? currency(bid.awarded_value) : "—" %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p class="empty-state">No bids with this contractor yet.</p>
+  <% end %>
+</div>

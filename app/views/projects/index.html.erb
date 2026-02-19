@@ -1,0 +1,46 @@
+<% content_for :page_title, "Projects" %>
+<% content_for :header_actions do %>
+  <%= link_to "New Project", new_project_path, class: "btn btn--primary" %>
+<% end %>
+
+<div class="card">
+  <% if @projects.any? %>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Project Name</th>
+          <th>Location</th>
+          <th>Type</th>
+          <th>Start Date</th>
+          <th class="text-right">Bids</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @projects.each do |project| %>
+          <tr>
+            <td>
+              <%= link_to project.name, project_path(project), class: "link" %>
+              <% if project.rebid_of_id? %>
+                <span class="tag">Rebid</span>
+              <% end %>
+            </td>
+            <td><%= project.location.presence || "—" %></td>
+            <td><%= project.project_type.presence || "—" %></td>
+            <td><%= project.estimated_start_date&.strftime("%b %d, %Y") || "—" %></td>
+            <td class="text-right"><%= project.bid_submissions.kept.count %></td>
+            <td class="table__actions">
+              <%= link_to "View", project_path(project), class: "btn btn--secondary btn--sm" %>
+              <%= link_to "Edit", edit_project_path(project), class: "btn btn--ghost btn--sm" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <div class="empty-state">
+      <p>No projects yet.</p>
+      <%= link_to "Create your first project", new_project_path, class: "btn btn--primary" %>
+    </div>
+  <% end %>
+</div>

@@ -1,0 +1,77 @@
+class BidSubmission < ApplicationRecord
+  include Discard::Model
+
+  belongs_to :project
+  belongs_to :contractor
+  belongs_to :user
+
+  enum :status, {
+    drafting: 0,
+    submitted: 1,
+    awarded: 2,
+    lost: 3,
+    withdrawn: 4,
+    declined: 5
+  }, default: :drafting
+
+  # Validations
+  validates :project_id, presence: true
+  validates :contractor_id, presence: true
+  validates :user_id, presence: true
+  validates :status, presence: true
+  validates :probability_percent, numericality: { in: 0..100 }, allow_nil: true
+
+  validates :submitted_value,
+    numericality: { greater_than: 0 },
+    if: -> { status_index >= status_index_for(:submitted) }
+
+  validates :awarded_value,
+    presence: true,
+    numericality: { greater_than: 0 },
+    if: :awarded?
+
+  validates :award_decision_at,
+    presence: true,
+    if: -> { awarded? || lost? }
+
+  validate :award_decision_after_bid_submitted
+
+  # Uniqueness per spec
+  validates :contractor_id, uniqueness: { scope: :project_id, message: "already has a bid for this project" }
+
+  # Scopes for metrics
+  scope :for_metrics, -> { kept.where(status: [ :submitted, :awarded, :lost ]) }
+  scope :won, -> { kept.where(status: :awarded) }
+  scope :active, -> { kept }
+
+  # Win rate helpers
+  def self.win_rate
+    metric_bids = for_metrics
+    return nil if metric_bids.count.zero?
+    (metric_bids.where(status: :awarded).count.to_f / metric_bids.count * 100).round(1)
+  end
+
+  def self.dollar_win_rate
+    metric_bids = for_metrics
+    total_submitted = metric_bids.sum(:submitted_value)
+    return nil if total_submitted.zero?
+    (metric_bids.where(status: :awarded).sum(:awarded_value) / total_submitted * 100).round(1)
+  end
+
+  private
+
+  def award_decision_after_bid_submitted
+    return unless award_decision_at && bid_submitted_at
+    if award_decision_at < bid_submitted_at
+      errors.add(:award_decision_at, "must be on or after bid submitted date")
+    end
+  end
+
+  def status_index
+    self.class.statuses[status]
+  end
+
+  def status_index_for(name)
+    self.class.statuses[name.to_s]
+  end
+end

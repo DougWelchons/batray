@@ -1,0 +1,40 @@
+<% content_for :page_title, "Contractors" %>
+<% content_for :header_actions do %>
+  <%= link_to "New Contractor", new_contractor_path, class: "btn btn--primary" %>
+<% end %>
+
+<div class="card">
+  <% if @contractors.any? %>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Contact</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th class="text-right">Bids</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @contractors.each do |contractor| %>
+          <tr>
+            <td><%= link_to contractor.name, contractor_path(contractor), class: "link" %></td>
+            <td><%= contractor.contact_name.presence || "—" %></td>
+            <td><%= contractor.email.presence || "—" %></td>
+            <td><%= contractor.phone.presence || "—" %></td>
+            <td class="text-right"><%= contractor.bid_submissions.kept.count %></td>
+            <td class="table__actions">
+              <%= link_to "Edit", edit_contractor_path(contractor), class: "btn btn--ghost btn--sm" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <div class="empty-state">
+      <p>No contractors yet.</p>
+      <%= link_to "Add your first contractor", new_contractor_path, class: "btn btn--primary" %>
+    </div>
+  <% end %>
+</div>

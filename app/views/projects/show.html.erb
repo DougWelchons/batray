@@ -1,0 +1,75 @@
+<% content_for :page_title, @project.name %>
+<% content_for :header_actions do %>
+  <%= link_to "Edit", edit_project_path(@project), class: "btn btn--secondary" %>
+  <%= button_to "Duplicate as Rebid", duplicate_project_path(@project), method: :post, class: "btn btn--ghost" %>
+  <%= link_to "Add GC Bid", new_project_bid_submission_path(@project), class: "btn btn--primary" %>
+<% end %>
+
+<div class="project-meta card">
+  <dl class="meta-list">
+    <% if @project.location.present? %>
+      <div class="meta-item">
+        <dt>Location</dt>
+        <dd><%= @project.location %></dd>
+      </div>
+    <% end %>
+    <% if @project.project_type.present? %>
+      <div class="meta-item">
+        <dt>Type</dt>
+        <dd><%= @project.project_type %></dd>
+      </div>
+    <% end %>
+    <% if @project.estimated_start_date.present? %>
+      <div class="meta-item">
+        <dt>Est. Start</dt>
+        <dd><%= @project.estimated_start_date.strftime("%b %d, %Y") %></dd>
+      </div>
+    <% end %>
+    <% if @project.rebid_of.present? %>
+      <div class="meta-item">
+        <dt>Rebid of</dt>
+        <dd><%= link_to @project.rebid_of.name, @project.rebid_of, class: "link" %></dd>
+      </div>
+    <% end %>
+  </dl>
+</div>
+
+<div class="card">
+  <h2 class="card__title">GC Bid Submissions</h2>
+
+  <% if @bid_submissions.any? %>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>General Contractor</th>
+          <th>Status</th>
+          <th>Bid Date</th>
+          <th class="text-right">Submitted Value</th>
+          <th class="text-right">Awarded Value</th>
+          <th>Estimator</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @bid_submissions.each do |bid| %>
+          <tr>
+            <td><strong><%= bid.contractor.name %></strong></td>
+            <td><%= status_badge(bid.status) %></td>
+            <td><%= bid.bid_submitted_at&.strftime("%b %d, %Y") || "—" %></td>
+            <td class="text-right"><%= currency(bid.submitted_value) %></td>
+            <td class="text-right"><%= bid.awarded? ? currency(bid.awarded_value) : "—" %></td>
+            <td><%= bid.user.name %></td>
+            <td class="table__actions">
+              <%= link_to "Edit", edit_project_bid_submission_path(@project, bid), class: "btn btn--ghost btn--sm" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <div class="empty-state">
+      <p>No bids yet.</p>
+      <%= link_to "Add first GC bid", new_project_bid_submission_path(@project), class: "btn btn--primary" %>
+    </div>
+  <% end %>
+</div>

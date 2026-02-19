@@ -1,0 +1,37 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  project: one
+  contractor: one
+  user: one
+  status: 1
+  bid_submitted_at: 2026-02-19 12:54:17
+  bid_due_at: 2026-02-19 12:54:17
+  award_decision_at: 2026-02-19 12:54:17
+  submitted_value: 9.99
+  awarded_value: 9.99
+  probability_percent: 1
+  included_fire_alarm: false
+  included_low_voltage: false
+  base_scope_description: MyText
+  reason_lost: MyString
+  notes: MyText
+  discarded_at: 2026-02-19 12:54:17
+
+two:
+  project: two
+  contractor: two
+  user: two
+  status: 1
+  bid_submitted_at: 2026-02-19 12:54:17
+  bid_due_at: 2026-02-19 12:54:17
+  award_decision_at: 2026-02-19 12:54:17
+  submitted_value: 9.99
+  awarded_value: 9.99
+  probability_percent: 1
+  included_fire_alarm: false
+  included_low_voltage: false
+  base_scope_description: MyText
+  reason_lost: MyString
+  notes: MyText
+  discarded_at: 2026-02-19 12:54:17

@@ -1,0 +1,67 @@
+<% content_for :page_title, "Dashboard" %>
+<% content_for :header_actions do %>
+  <%= link_to "New Project", new_project_path, class: "btn btn--primary" %>
+<% end %>
+
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-card__label">Total Bids YTD</div>
+    <div class="stat-card__value"><%= @total_bids_ytd %></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-card__label">Awarded Revenue YTD</div>
+    <div class="stat-card__value"><%= currency(@total_awarded_ytd) %></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-card__label">Win Rate</div>
+    <div class="stat-card__value"><%= @win_rate ? "#{@win_rate}%" : "—" %></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-card__label">Dollar Win Rate</div>
+    <div class="stat-card__value"><%= @dollar_win_rate ? "#{@dollar_win_rate}%" : "—" %></div>
+  </div>
+</div>
+
+<div class="charts-grid">
+  <div class="card">
+    <h2 class="card__title">Bids per Month</h2>
+    <%= bar_chart @monthly_bid_volume, colors: ["#5C5AAE"], height: "220px" %>
+  </div>
+
+  <div class="card">
+    <h2 class="card__title">Awarded Revenue per Month</h2>
+    <%= bar_chart @monthly_awarded_revenue, colors: ["#2F855A"], height: "220px",
+        prefix: "$", thousands: "," %>
+  </div>
+</div>
+
+<div class="card">
+  <h2 class="card__title">Win Rate by GC</h2>
+  <% if @win_rate_by_gc.any? %>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>General Contractor</th>
+          <th class="text-right">Total Bids</th>
+          <th class="text-right">Awarded</th>
+          <th class="text-right">Win Rate</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @win_rate_by_gc.each do |row| %>
+          <tr>
+            <td><%= row.gc_name %></td>
+            <td class="text-right"><%= row.total_bids %></td>
+            <td class="text-right"><%= row.awarded_count %></td>
+            <td class="text-right">
+              <% rate = row.total_bids > 0 ? (row.awarded_count.to_f / row.total_bids * 100).round(1) : 0 %>
+              <%= "#{rate}%" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p class="empty-state">No bid data available yet.</p>
+  <% end %>
+</div>

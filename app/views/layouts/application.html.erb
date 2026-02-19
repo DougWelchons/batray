@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html data-theme="light">
+  <head>
+    <title><%= content_for(:title) || "Batray – Bid Tracker" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Batray">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="app-body">
+    <% if user_signed_in? %>
+      <nav class="sidebar" aria-label="Main navigation">
+        <div class="sidebar__brand">
+          <span class="sidebar__brand-name">Batray</span>
+        </div>
+
+        <ul class="sidebar__nav" role="list">
+          <li>
+            <%= link_to dashboard_path, class: "sidebar__nav-item #{'sidebar__nav-item--active' if current_page?(dashboard_path) || current_page?(root_path)}" do %>
+              <svg class="sidebar__icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/></svg>
+              Dashboard
+            <% end %>
+          </li>
+          <li>
+            <%= link_to projects_path, class: "sidebar__nav-item #{'sidebar__nav-item--active' if request.path.start_with?('/projects')}" do %>
+              <svg class="sidebar__icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/></svg>
+              Projects
+            <% end %>
+          </li>
+          <li>
+            <%= link_to contractors_path, class: "sidebar__nav-item #{'sidebar__nav-item--active' if request.path.start_with?('/contractors')}" do %>
+              <svg class="sidebar__icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/></svg>
+              Contractors
+            <% end %>
+          </li>
+          <% if current_user.admin? %>
+          <li>
+            <%= link_to admin_users_path, class: "sidebar__nav-item #{'sidebar__nav-item--active' if request.path.start_with?('/admin')}" do %>
+              <svg class="sidebar__icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd"/></svg>
+              Users
+            <% end %>
+          </li>
+          <% end %>
+        </ul>
+
+        <div class="sidebar__footer">
+          <div class="sidebar__user-info">
+            <span class="sidebar__user-name"><%= current_user.name %></span>
+            <span class="sidebar__user-role"><%= current_user.role.humanize %></span>
+          </div>
+          <%= button_to "Sign out", destroy_user_session_path, method: :delete, class: "btn btn--ghost btn--sm" %>
+        </div>
+      </nav>
+    <% end %>
+
+    <div class="app-main <%= user_signed_in? ? 'app-main--with-sidebar' : '' %>">
+      <% if user_signed_in? %>
+        <header class="top-header">
+          <div class="top-header__title">
+            <h1 class="page-title"><%= content_for(:page_title) %></h1>
+          </div>
+          <div class="top-header__actions">
+            <%= content_for(:header_actions) %>
+          </div>
+        </header>
+      <% end %>
+
+      <div class="page-content">
+        <%= render "shared/flash" %>
+        <%= yield %>
+      </div>
+    </div>
+  </body>
+</html>
