@@ -272,7 +272,7 @@ ul, ol { list-style: none; }
   white-space: nowrap;
 }
 
-.status-drafting  { background-color: var(--color-text-muted); }
+.status-drafting  { background-color: var(--status-in-progress); }
 .status-submitted { background-color: var(--status-submitted); }
 .status-awarded   { background-color: var(--status-awarded); }
 .status-lost      { background-color: var(--status-lost); }
@@ -313,6 +313,25 @@ ul, ol { list-style: none; }
 .table__actions .btn + .btn { margin-left: var(--space-2); }
 .text-right { text-align: right; }
 
+/* Sortable column headers */
+.sort-link {
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+.sort-link:hover { color: var(--color-text-primary); }
+.sort-link--active { color: var(--color-accent); }
+.sort-link--active:hover { color: var(--color-accent); }
+.sort-link--right { justify-content: flex-end; width: 100%; }
+.sort-indicator { opacity: 0.7; }
+
 /* Project row status indicators */
 .project-row--awarded td:first-child { border-left: 3px solid var(--status-awarded); }
 .project-row--lost    td:first-child { border-left: 3px solid var(--status-lost); }
@@ -330,7 +349,37 @@ ul, ol { list-style: none; }
 .bid-due--overdue { color: var(--status-lost); font-weight: 500; }
 
 /* ===========================================================
-   9. FORMS
+   9. FILTER BAR
+   =========================================================== */
+.filter-bar {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-5);
+}
+
+.filter-bar__fields {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.filter-bar__fields .form__field {
+  min-width: 140px;
+  flex: 1;
+}
+
+.filter-bar__actions {
+  display: flex;
+  gap: var(--space-2);
+  align-items: flex-end;
+  padding-bottom: 1px;
+}
+
+/* ===========================================================
+   10. FORMS
    =========================================================== */
 .form__section { margin-bottom: var(--space-6); }
 

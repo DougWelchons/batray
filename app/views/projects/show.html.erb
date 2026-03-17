@@ -43,6 +43,7 @@
         <tr>
           <th>General Contractor</th>
           <th>Status</th>
+          <th>Bid Due</th>
           <th>Bid Date</th>
           <th class="text-right">Submitted Value</th>
           <th class="text-right">Awarded Value</th>
@@ -55,6 +56,7 @@
           <tr>
             <td><strong><%= bid.contractor.name %></strong></td>
             <td><%= status_badge(bid.status) %></td>
+            <td><%= bid.bid_due_at&.strftime("%b %d, %Y") || "—" %></td>
             <td><%= bid.bid_submitted_at&.strftime("%b %d, %Y") || "—" %></td>
             <td class="text-right"><%= currency(bid.submitted_value) %></td>
             <td class="text-right"><%= bid.awarded? ? currency(bid.awarded_value) : "—" %></td>

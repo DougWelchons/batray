@@ -3,17 +3,67 @@
   <%= link_to "New Project", new_project_path, class: "btn btn--primary" %>
 <% end %>
 
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-card__label">Projects with Open Bids</div>
+    <div class="stat-card__value"><%= @bids_due_count %></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-card__label">Bids Due in Next 2 Days</div>
+    <div class="stat-card__value"><%= @bids_due_soon_count %></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-card__label">Projects with Overdue Bids</div>
+    <div class="stat-card__value"><%= @bids_overdue_count %></div>
+  </div>
+</div>
+
+<%= form_with url: projects_path, method: :get, class: "filter-bar", data: { turbo: false } do |f| %>
+  <%= hidden_field_tag :sort, params[:sort] if params[:sort].present? %>
+  <%= hidden_field_tag :dir, params[:dir] if params[:dir].present? %>
+  <div class="filter-bar__fields">
+    <div class="form__field">
+      <%= label_tag :status, "Bid Status", class: "form__label" %>
+      <%= select_tag :status,
+            options_for_select([["All Statuses", ""]] + BidSubmission.statuses.keys.map { |s| [s.humanize, s] }, params[:status]),
+            class: "form__select form__select--sm" %>
+    </div>
+    <div class="form__field">
+      <%= label_tag :project_type, "Type", class: "form__label" %>
+      <%= select_tag :project_type,
+            options_for_select([["All Types", ""]] + @filter_types.map { |t| [t, t] }, params[:project_type]),
+            class: "form__select form__select--sm" %>
+    </div>
+    <div class="form__field">
+      <%= label_tag :location, "Location", class: "form__label" %>
+      <%= text_field_tag :location, params[:location], placeholder: "Search location…", class: "form__input form__input--sm" %>
+    </div>
+    <div class="form__field">
+      <%= label_tag :year, "Year", class: "form__label" %>
+      <%= select_tag :year,
+            options_for_select([["All Years", ""]] + @filter_years.map { |y| [y, y] }, params[:year]),
+            class: "form__select form__select--sm" %>
+    </div>
+  </div>
+  <div class="filter-bar__actions">
+    <%= f.submit "Filter", class: "btn btn--secondary btn--sm" %>
+    <% if [ :status, :project_type, :location, :year ].any? { |k| params[k].present? } %>
+      <%= link_to "Clear", projects_path, class: "btn btn--ghost btn--sm" %>
+    <% end %>
+  </div>
+<% end %>
+
 <div class="card">
   <% if @projects.any? %>
     <table class="table">
       <thead>
         <tr>
-          <th>Project Name</th>
-          <th>Location</th>
-          <th>Bid Due</th>
-          <th>Type</th>
-          <th>Start Date</th>
-          <th class="text-right">Bids</th>
+          <th><%= sort_link "name", "Project Name" %></th>
+          <th><%= sort_link "location", "Location" %></th>
+          <th><%= sort_link "bid_due_at", "Bid Due" %></th>
+          <th><%= sort_link "project_type", "Type" %></th>
+          <th><%= sort_link "estimated_start_date", "Start Date" %></th>
+          <th class="text-right"><%= sort_link "bid_count", "Bids", class: "sort-link--right" %></th>
           <th></th>
         </tr>
       </thead>
