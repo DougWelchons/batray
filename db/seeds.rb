@@ -45,7 +45,7 @@ SD_LOCATIONS = [
   "Ramona, CA",
   "Los Angeles, CA",
   "Riverside, CA",
-  "Temecula, CA",
+  "Temecula, CA"
 ].freeze
 
 SCOPE_DESCRIPTIONS = [
@@ -56,7 +56,7 @@ SCOPE_DESCRIPTIONS = [
   "Full electrical including low voltage rough-in, power, lighting controls.",
   "Service entrance, distribution, branch circuits, lighting, fire alarm, and low voltage.",
   "Electrical per Division 26; excludes specialty systems.",
-  "Complete electrical systems including switchgear, panels, lighting, and devices.",
+  "Complete electrical systems including switchgear, panels, lighting, and devices."
 ].freeze
 
 REASONS_LOST = [
@@ -69,7 +69,7 @@ REASONS_LOST = [
   "Owner canceled project",
   "Missed bid deadline",
   "Bonding requirement",
-  "Out-of-area GC preference",
+  "Out-of-area GC preference"
 ].freeze
 
 # ============================================================
@@ -79,7 +79,7 @@ REASONS_LOST = [
 puts "  Creating users..."
 
 admin = User.create!(
-  name: "Doug Wilson",
+  name: "John Wilson",
   email: "user@example.com",
   role: :admin,
   password: "password",
@@ -91,7 +91,7 @@ estimators = [
   { name: "Mike Torres",   email: "mike.torres@batray.com",   role: :estimator },
   { name: "Jen Nakamura",  email: "jen.nakamura@batray.com",  role: :estimator },
   { name: "Carlos Reyes",  email: "carlos.reyes@batray.com",  role: :estimator },
-  { name: "Lisa Grant",    email: "lisa.grant@batray.com",    role: :viewer    },
+  { name: "Lisa Grant",    email: "lisa.grant@batray.com",    role: :viewer    }
 ].map do |attrs|
   User.create!(
     name: attrs[:name],
@@ -103,7 +103,7 @@ estimators = [
 end
 
 # Users who appear on bids (estimators only)
-bid_users = [admin] + estimators.select { |u| u.estimator? }
+bid_users = [ admin ] + estimators.select { |u| u.estimator? }
 
 puts "  #{User.count} users"
 
@@ -128,7 +128,7 @@ gc_data = [
   { name: "Skanska USA Building",         contact_name: "Derek Finch",      email: "dfinch@skanska.com",             phone: "619-555-0278" },
   { name: "Gilbane Building Company",     contact_name: "Monica Stein",     email: "mstein@gilbaneco.com",           phone: "619-555-0293" },
   { name: "Soltek Pacific Construction",  contact_name: "James Okafor",     email: "jokafor@soltekpacific.com",      phone: "619-555-0309" },
-  { name: "Lusardi Construction",         contact_name: "Rachel Torrez",    email: "rtorrez@lusardiconstruction.com", phone: "760-555-0324" },
+  { name: "Lusardi Construction",         contact_name: "Rachel Torrez",    email: "rtorrez@lusardiconstruction.com", phone: "760-555-0324" }
 ].freeze
 
 contractors = gc_data.map do |attrs|
@@ -157,21 +157,21 @@ SD_PROJECT_PREFIXES = [
 ].freeze
 
 SD_PROJECT_SUFFIXES = {
-  "Office"       => ["Office Park", "Corporate Center", "Tech Hub", "Business Center", "Professional Plaza", "Office Building", "Innovation Campus"],
-  "Medical"      => ["Medical Center", "Medical Office Building", "Health Pavilion", "Surgery Center", "Medical Campus", "Outpatient Clinic", "Medical Plaza"],
-  "Industrial"   => ["Distribution Center", "Logistics Hub", "Warehouse Facility", "Manufacturing Plant", "Industrial Park", "Fulfillment Center", "Cold Storage Facility"],
-  "Retail"       => ["Retail Center", "Shopping Plaza", "Lifestyle Center", "Retail Village", "Mixed-Use Retail", "Strip Mall Renovation", "Big Box Anchor"],
-  "Education"    => ["Elementary School", "Middle School", "High School Modernization", "Community College Building", "University Research Hall", "STEM Center", "Library & Learning Commons"],
-  "Hospitality"  => ["Hotel & Conference Center", "Extended Stay Hotel", "Boutique Hotel Renovation", "Resort Expansion", "Marriott Renovation", "Hotel Tower"],
-  "Data Center"  => ["Data Center – Phase 1", "Data Center – Phase 2", "Colocation Facility", "Network Operations Center", "Edge Data Center", "Server Farm Build-Out"],
-  "Multifamily"  => ["Apartment Complex", "Mixed-Use Residential Tower", "Senior Living Community", "Affordable Housing", "Market-Rate Apartments", "Townhome Development", "Student Housing"],
+  "Office"       => [ "Office Park", "Corporate Center", "Tech Hub", "Business Center", "Professional Plaza", "Office Building", "Innovation Campus" ],
+  "Medical"      => [ "Medical Center", "Medical Office Building", "Health Pavilion", "Surgery Center", "Medical Campus", "Outpatient Clinic", "Medical Plaza" ],
+  "Industrial"   => [ "Distribution Center", "Logistics Hub", "Warehouse Facility", "Manufacturing Plant", "Industrial Park", "Fulfillment Center", "Cold Storage Facility" ],
+  "Retail"       => [ "Retail Center", "Shopping Plaza", "Lifestyle Center", "Retail Village", "Mixed-Use Retail", "Strip Mall Renovation", "Big Box Anchor" ],
+  "Education"    => [ "Elementary School", "Middle School", "High School Modernization", "Community College Building", "University Research Hall", "STEM Center", "Library & Learning Commons" ],
+  "Hospitality"  => [ "Hotel & Conference Center", "Extended Stay Hotel", "Boutique Hotel Renovation", "Resort Expansion", "Marriott Renovation", "Hotel Tower" ],
+  "Data Center"  => [ "Data Center – Phase 1", "Data Center – Phase 2", "Colocation Facility", "Network Operations Center", "Edge Data Center", "Server Farm Build-Out" ],
+  "Multifamily"  => [ "Apartment Complex", "Mixed-Use Residential Tower", "Senior Living Community", "Affordable Housing", "Market-Rate Apartments", "Townhome Development", "Student Housing" ]
 }.freeze
 
 used_project_names = Set.new
 
 def generate_project_name(type, used_names)
   prefixes = SD_PROJECT_PREFIXES.dup.shuffle
-  suffixes = SD_PROJECT_SUFFIXES[type] || ["Building"]
+  suffixes = SD_PROJECT_SUFFIXES[type] || [ "Building" ]
   loop do
     name = "#{prefixes.sample} #{suffixes.sample}"
     unless used_names.include?(name)
@@ -223,8 +223,8 @@ def create_bids_for_project(project:, gc_list:, bid_submitted_at:, bid_due_at:, 
       submitted_value:       submitted_value,
       awarded_value:         awarded_value,
       probability_percent:   status == :awarded ? rand(55..85) : (status == :lost ? rand(10..45) : rand(35..65)),
-      included_fire_alarm:   [true, false].sample,
-      included_low_voltage:  [true, false].sample,
+      included_fire_alarm:   [ true, false ].sample,
+      included_low_voltage:  [ true, false ].sample,
       reason_lost:           status == :lost ? REASONS_LOST.sample : nil,
       base_scope_description: SCOPE_DESCRIPTIONS.sample
     )
@@ -252,14 +252,14 @@ def assign_project_outcomes(gc_list, mode:)
     # Sprinkle 0-1 withdrawn or declined among the losers
     if size > 2 && rand < 0.25
       idx = (1...size).to_a.sample
-      outcomes[idx] = [:withdrawn, :declined].sample
+      outcomes[idx] = [ :withdrawn, :declined ].sample
     end
 
   when :lost
     # All lost, occasional withdrawn/declined
     outcomes = Array.new(size, :lost)
     (1...size).each do |i|
-      outcomes[i] = [:withdrawn, :declined].sample if rand < 0.12
+      outcomes[i] = [ :withdrawn, :declined ].sample if rand < 0.12
     end
 
   when :pending
@@ -267,7 +267,7 @@ def assign_project_outcomes(gc_list, mode:)
     outcomes = Array.new(size, :submitted)
     (1...size).each do |i|
       if rand < 0.15
-        outcomes[i] = [:lost, :withdrawn, :declined].sample
+        outcomes[i] = [ :lost, :withdrawn, :declined ].sample
       end
     end
   end
@@ -417,9 +417,9 @@ puts "  Creating 20 drafting projects..."
 
 due_date_configs = [
   # [date_offset_days, label]
-  *Array.new(4)  { [rand(0..2),   :warning] },   # due within 2 days
-  *Array.new(2)  { [-rand(2..5),  :overdue] },    # overdue
-  *Array.new(14) { [rand(5..42),  :future]  },    # future
+  *Array.new(4)  { [ rand(0..2),   :warning ] },   # due within 2 days
+  *Array.new(2)  { [ -rand(2..5),  :overdue ] },    # overdue
+  *Array.new(14) { [ rand(5..42),  :future ]  }    # future
 ].shuffle
 
 due_date_configs.each_with_index do |config, i|
@@ -461,8 +461,8 @@ due_date_configs.each_with_index do |config, i|
       bid_submitted_at:      bid_submitted_at,
       submitted_value:       submitted_value,
       probability_percent:   rand(40..70),
-      included_fire_alarm:   [true, false].sample,
-      included_low_voltage:  [true, false].sample,
+      included_fire_alarm:   [ true, false ].sample,
+      included_low_voltage:  [ true, false ].sample,
       base_scope_description: SCOPE_DESCRIPTIONS.sample
     )
   end
@@ -533,8 +533,8 @@ rebid_candidates.each_with_index do |original, i|
       status:                :drafting,
       bid_due_at:            bid_due_at + rand(-2..2),
       probability_percent:   rand(35..65),
-      included_fire_alarm:   [true, false].sample,
-      included_low_voltage:  [true, false].sample,
+      included_fire_alarm:   [ true, false ].sample,
+      included_low_voltage:  [ true, false ].sample,
       base_scope_description: SCOPE_DESCRIPTIONS.sample
     )
   end
@@ -583,8 +583,8 @@ if created_rebids.any?
         status:                :drafting,
         bid_due_at:            bid_due_at + rand(-2..2),
         probability_percent:   rand(30..60),
-        included_fire_alarm:   [true, false].sample,
-        included_low_voltage:  [true, false].sample,
+        included_fire_alarm:   [ true, false ].sample,
+        included_low_voltage:  [ true, false ].sample,
         base_scope_description: SCOPE_DESCRIPTIONS.sample
       )
     end
