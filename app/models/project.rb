@@ -1,7 +1,7 @@
 class Project < ApplicationRecord
   include Discard::Model
 
-  has_many :bid_submissions, dependent: :destroy
+  has_many :bid_submissions, dependent: :destroy, inverse_of: :project
   belongs_to :rebid_of, class_name: "Project", optional: true
   has_many :rebids, class_name: "Project", foreign_key: :rebid_of_id, dependent: :nullify
 

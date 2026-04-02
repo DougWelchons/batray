@@ -1,7 +1,7 @@
 class BidSubmission < ApplicationRecord
   include Discard::Model
 
-  belongs_to :project
+  belongs_to :project, inverse_of: :bid_submissions
   belongs_to :contractor
   belongs_to :user
 
@@ -15,7 +15,7 @@ class BidSubmission < ApplicationRecord
   }, default: :drafting
 
   # Validations
-  validates :project_id, presence: true
+  validates :project, presence: true
   validates :contractor_id, presence: true
   validates :user_id, presence: true
   validates :status, presence: true

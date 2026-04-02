@@ -86,6 +86,11 @@ class ProjectsController < ApplicationController
     @project = Project.new(project_params)
     authorize @project
 
+    # Assign current user to all bid submissions
+    @project.bid_submissions.each do |bid|
+      bid.user = current_user
+    end
+
     if @project.save
       redirect_to @project, notice: "Project created successfully."
     else
