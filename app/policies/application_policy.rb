@@ -49,5 +49,10 @@ class ApplicationPolicy
     private
 
     attr_reader :user, :scope
+
+    # Default company scoping for all policies
+    def scope_to_company
+      scope.where(company_id: user.company_id)
+    end
   end
 end

@@ -2,8 +2,11 @@ class DashboardController < ApplicationController
   def index
     year_start = Date.current.beginning_of_year
 
+    # Scope all BidSubmissions to current company
+    company_bids = BidSubmission.joins(:project).where(projects: { company_id: current_user.company_id })
+
     # Projects with at least one submitted/awarded/lost bid submitted this year
-    qualifying_project_ids = BidSubmission.kept
+    qualifying_project_ids = company_bids.kept
       .where(status: [ :submitted, :awarded, :lost ])
       .where("bid_submitted_at >= ?", year_start)
       .select(:project_id)
@@ -13,13 +16,13 @@ class DashboardController < ApplicationController
     @total_bids_ytd = qualifying_project_ids.count
 
     # Awarded Revenue YTD: sum of awarded_value where award was decided this year
-    @total_awarded_ytd = BidSubmission.kept
+    @total_awarded_ytd = company_bids.kept
       .where(status: :awarded)
       .where("award_decision_at >= ?", year_start)
       .sum(:awarded_value)
 
     # Win Rate YTD (project-level): awarded projects / qualifying projects
-    awarded_project_ids = BidSubmission.kept
+    awarded_project_ids = company_bids.kept
       .where(status: :awarded)
       .where("award_decision_at >= ?", year_start)
       .select(:project_id)
@@ -32,7 +35,7 @@ class DashboardController < ApplicationController
     # Numerator: SUM of awarded_value for projects awarded this year
     # Denominator: for each qualifying project, use awarded_value if won,
     #              else average submitted_value of its submitted/lost bids
-    numerator = BidSubmission.kept
+    numerator = company_bids.kept
       .where(status: :awarded)
       .where("award_decision_at >= ?", year_start)
       .sum(:awarded_value)
@@ -48,7 +51,7 @@ class DashboardController < ApplicationController
       denominator = 0.0
 
       if awarded_pid_list.any?
-        denominator += BidSubmission.kept
+        denominator += company_bids.kept
           .where(status: :awarded)
           .where("award_decision_at >= ?", year_start)
           .where(project_id: awarded_pid_list)
@@ -57,7 +60,7 @@ class DashboardController < ApplicationController
 
       if non_awarded_pids.any?
         # Average submitted_value per non-awarded project, then sum those averages
-        avg_per_project = BidSubmission.kept
+        avg_per_project = company_bids.kept
           .where(status: [ :submitted, :lost ])
           .where(project_id: non_awarded_pids)
           .group(:project_id)
@@ -70,19 +73,19 @@ class DashboardController < ApplicationController
       @dollar_win_rate = nil
     end
 
-    @monthly_bid_volume = BidSubmission.kept
+    @monthly_bid_volume = company_bids.kept
       .where.not(bid_submitted_at: nil)
       .group_by_month(:bid_submitted_at, last: 12)
       .count
 
-    @monthly_awarded_revenue = BidSubmission.kept
+    @monthly_awarded_revenue = company_bids.kept
       .where(status: :awarded)
       .where.not(award_decision_at: nil)
       .group_by_month(:award_decision_at, last: 12)
       .sum(:awarded_value)
 
     # GC win rate: bid-level (all time), excludes withdrawn and declined
-    @win_rate_by_gc = BidSubmission.kept
+    @win_rate_by_gc = company_bids.kept
       .joins(:contractor)
       .where(status: [ :submitted, :awarded, :lost ])
       .group("contractors.name")

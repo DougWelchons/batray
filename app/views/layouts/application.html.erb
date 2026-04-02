@@ -10,8 +10,9 @@
 
     <%= yield :head %>
 
-    <link rel="icon" href="/icon.png?v=6" type="image/png">
-    <link rel="apple-touch-icon" href="/icon.png?v=6">
+    <% icon_file = Rails.env.production? ? "icon.png" : "icon-dev.png" %>
+    <link rel="icon" href="/<%= icon_file %>?v=6" type="image/png">
+    <link rel="apple-touch-icon" href="/<%= icon_file %>?v=6">
 
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>

@@ -48,10 +48,11 @@ class BidSubmissionsController < ApplicationController
   private
 
   def set_project
-    @project = Project.kept.find(params[:project_id])
+    @project = policy_scope(Project.kept).find(params[:project_id])
   end
 
   def set_bid_submission
+    # @project is already scoped to company via policy_scope in set_project
     @bid_submission = @project.bid_submissions.kept.find(params[:id])
   end
 

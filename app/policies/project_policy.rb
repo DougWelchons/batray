@@ -1,17 +1,23 @@
 class ProjectPolicy < ApplicationPolicy
   def index?   = true
-  def show?    = true
+  def show?    = record.company_id == user.company_id
   def new?     = user.admin? || user.estimator?
   def create?  = user.admin? || user.estimator?
-  def edit?    = user.admin? || user.estimator?
-  def update?  = user.admin? || user.estimator?
+  def edit?    = same_company? && (user.admin? || user.estimator?)
+  def update?  = same_company? && (user.admin? || user.estimator?)
   def destroy? = false
-  def discard? = user.admin?
-  def duplicate? = user.admin? || user.estimator?
+  def discard? = same_company? && user.admin?
+  def duplicate? = same_company? && (user.admin? || user.estimator?)
 
   class Scope < ApplicationPolicy::Scope
     def resolve
-      scope.kept
+      scope_to_company.kept
     end
+  end
+
+  private
+
+  def same_company?
+    record.company_id == user.company_id
   end
 end

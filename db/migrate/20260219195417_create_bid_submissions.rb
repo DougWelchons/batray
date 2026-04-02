@@ -1,4 +1,4 @@
-class CreateBidSubmissions < ActiveRecord::Migration[8.2]
+class CreateBidSubmissions < ActiveRecord::Migration[8.0]
   def change
     create_table :bid_submissions do |t|
       t.references :project, null: false, foreign_key: true

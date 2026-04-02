@@ -13,6 +13,7 @@ BidSubmission.unscoped.delete_all
 Project.unscoped.delete_all
 Contractor.unscoped.delete_all
 User.unscoped.delete_all
+Company.unscoped.delete_all
 
 Faker::UniqueGenerator.clear
 
@@ -73,20 +74,42 @@ REASONS_LOST = [
 ].freeze
 
 # ============================================================
+# Companies
+# ============================================================
+
+puts "  Creating companies..."
+
+company_a = Company.create!(
+  name: "Batray Electric",
+  subdomain: "batray",
+  active: true
+)
+
+company_b = Company.create!(
+  name: "Stingray Electrical Services",
+  subdomain: "stingray",
+  active: true
+)
+
+puts "  #{Company.count} companies created"
+
+# ============================================================
 # Users
 # ============================================================
 
 puts "  Creating users..."
 
+# Company A users
 admin = User.create!(
   name: "John Wilson",
   email: "user@example.com",
   role: :admin,
   password: "password",
-  password_confirmation: "password"
+  password_confirmation: "password",
+  company: company_a
 )
 
-estimators = [
+estimators_a = [
   { name: "Sarah Chen",    email: "sarah.chen@batray.com",    role: :estimator },
   { name: "Mike Torres",   email: "mike.torres@batray.com",   role: :estimator },
   { name: "Jen Nakamura",  email: "jen.nakamura@batray.com",  role: :estimator },
@@ -98,14 +121,41 @@ estimators = [
     email: attrs[:email],
     role: attrs[:role],
     password: "password",
-    password_confirmation: "password"
+    password_confirmation: "password",
+    company: company_a
+  )
+end
+
+# Company B users
+admin_b = User.create!(
+  name: "Rachel Martinez",
+  email: "rachel@stingray.com",
+  role: :admin,
+  password: "password",
+  password_confirmation: "password",
+  company: company_b
+)
+
+estimators_b = [
+  { name: "David Park",     email: "david.park@stingray.com",     role: :estimator },
+  { name: "Emma Johnson",   email: "emma.johnson@stingray.com",   role: :estimator },
+  { name: "James Liu",      email: "james.liu@stingray.com",      role: :estimator }
+].map do |attrs|
+  User.create!(
+    name: attrs[:name],
+    email: attrs[:email],
+    role: attrs[:role],
+    password: "password",
+    password_confirmation: "password",
+    company: company_b
   )
 end
 
 # Users who appear on bids (estimators only)
-bid_users = [ admin ] + estimators.select { |u| u.estimator? }
+bid_users_a = [ admin ] + estimators_a.select { |u| u.estimator? }
+bid_users_b = [ admin_b ] + estimators_b.select { |u| u.estimator? }
 
-puts "  #{User.count} users"
+puts "  #{User.count} users (Company A: #{company_a.users.count}, Company B: #{company_b.users.count})"
 
 # ============================================================
 # Contractors (GCs) – 15 San Diego / Southern CA firms
@@ -131,16 +181,33 @@ gc_data = [
   { name: "Lusardi Construction",         contact_name: "Rachel Torrez",    email: "rtorrez@lusardiconstruction.com", phone: "760-555-0324" }
 ].freeze
 
-contractors = gc_data.map do |attrs|
+# Split contractors between companies
+gc_data_a = gc_data[0..9]  # First 10 for Company A
+gc_data_b = gc_data[10..14] # Last 5 for Company B
+
+contractors_a = gc_data_a.map do |attrs|
   Contractor.create!(
     name:         attrs[:name],
     contact_name: attrs[:contact_name],
     email:        attrs[:email],
-    phone:        attrs[:phone]
+    phone:        attrs[:phone],
+    company:      company_a
   )
 end
 
-puts "  #{Contractor.count} contractors"
+contractors_b = gc_data_b.map do |attrs|
+  Contractor.create!(
+    name:         attrs[:name],
+    contact_name: attrs[:contact_name],
+    email:        attrs[:email],
+    phone:        attrs[:phone],
+    company:      company_b
+  )
+end
+
+contractors = contractors_a + contractors_b
+
+puts "  #{Contractor.count} contractors (Company A: #{contractors_a.count}, Company B: #{contractors_b.count})"
 
 # ============================================================
 # Project name generation – realistic SD-area construction
@@ -284,7 +351,7 @@ end
 # ============================================================
 
 def create_project_batch(count:, year_offset:, won_pct:, lost_pct:, pending_pct:,
-                         contractors:, bid_users:, used_names:)
+                         contractors:, bid_users:, used_names:, company:)
   year_start = Date.new(Date.today.year - year_offset, 1, 1)
   year_end   = year_offset.zero? ? Date.today - 1 : Date.new(Date.today.year - year_offset, 12, 31)
 
@@ -313,7 +380,8 @@ def create_project_batch(count:, year_offset:, won_pct:, lost_pct:, pending_pct:
       name:                 name,
       location:             location,
       project_type:         type,
-      estimated_start_date: start_date
+      estimated_start_date: start_date,
+      company:              company
     )
 
     gc_count = rand(1..6)
@@ -342,68 +410,107 @@ def create_project_batch(count:, year_offset:, won_pct:, lost_pct:, pending_pct:
 end
 
 # ============================================================
-# THIS YEAR – ~89 projects
+# THIS YEAR – ~89 projects for Company A, ~40 for Company B
 # 20% awarded, 55% lost, 25% pending
 # ============================================================
 
-puts "  Creating this year's projects (~89)..."
+puts "  Creating this year's projects..."
 
-this_year_projects = create_project_batch(
+this_year_projects_a = create_project_batch(
   count:       89,
   year_offset: 0,
   won_pct:     0.20,
   lost_pct:    0.55,
   pending_pct: 0.25,
-  contractors: contractors,
-  bid_users:   bid_users,
-  used_names:  used_project_names
+  contractors: contractors_a,
+  bid_users:   bid_users_a,
+  used_names:  used_project_names,
+  company:     company_a
 )
 
-puts "    #{this_year_projects.size} projects created"
+this_year_projects_b = create_project_batch(
+  count:       40,
+  year_offset: 0,
+  won_pct:     0.20,
+  lost_pct:    0.55,
+  pending_pct: 0.25,
+  contractors: contractors_b,
+  bid_users:   bid_users_b,
+  used_names:  used_project_names,
+  company:     company_b
+)
+
+puts "    Company A: #{this_year_projects_a.size} projects, Company B: #{this_year_projects_b.size} projects"
 
 # ============================================================
-# LAST YEAR – ~75 projects
+# LAST YEAR – ~75 projects for Company A, ~35 for Company B
 # 25% awarded, 75% lost (a few declined/withdrawn mixed in)
 # pending_pct: 0 – all resolved
 # ============================================================
 
-puts "  Creating last year's projects (~75)..."
+puts "  Creating last year's projects..."
 
-last_year_projects = create_project_batch(
+last_year_projects_a = create_project_batch(
   count:       75,
   year_offset: 1,
   won_pct:     0.25,
   lost_pct:    0.75,
   pending_pct: 0.00,
-  contractors: contractors,
-  bid_users:   bid_users,
-  used_names:  used_project_names
+  contractors: contractors_a,
+  bid_users:   bid_users_a,
+  used_names:  used_project_names,
+  company:     company_a
 )
 
-puts "    #{last_year_projects.size} projects created"
+last_year_projects_b = create_project_batch(
+  count:       35,
+  year_offset: 1,
+  won_pct:     0.25,
+  lost_pct:    0.75,
+  pending_pct: 0.00,
+  contractors: contractors_b,
+  bid_users:   bid_users_b,
+  used_names:  used_project_names,
+  company:     company_b
+)
+
+puts "    Company A: #{last_year_projects_a.size} projects, Company B: #{last_year_projects_b.size} projects"
 
 # ============================================================
-# TWO YEARS AGO – ~75 projects
+# TWO YEARS AGO – ~75 projects for Company A, ~35 for Company B
 # 25% awarded, 75% lost (same ratios)
 # ============================================================
 
-puts "  Creating two-years-ago projects (~75)..."
+puts "  Creating two-years-ago projects..."
 
-two_years_ago_projects = create_project_batch(
+two_years_ago_projects_a = create_project_batch(
   count:       75,
   year_offset: 2,
   won_pct:     0.25,
   lost_pct:    0.75,
   pending_pct: 0.00,
-  contractors: contractors,
-  bid_users:   bid_users,
-  used_names:  used_project_names
+  contractors: contractors_a,
+  bid_users:   bid_users_a,
+  used_names:  used_project_names,
+  company:     company_a
 )
 
-puts "    #{two_years_ago_projects.size} projects created"
+two_years_ago_projects_b = create_project_batch(
+  count:       35,
+  year_offset: 2,
+  won_pct:     0.25,
+  lost_pct:    0.75,
+  pending_pct: 0.00,
+  contractors: contractors_b,
+  bid_users:   bid_users_b,
+  used_names:  used_project_names,
+  company:     company_b
+)
+
+puts "    Company A: #{two_years_ago_projects_a.size} projects, Company B: #{two_years_ago_projects_b.size} projects"
 
 # ============================================================
-# DRAFTING PROJECTS – 20 projects currently in pipeline
+# DRAFTING PROJECTS – 20 for Company A, 10 for Company B
 #
 # Due date urgency:
 #   4 projects: due within next 2 days
@@ -413,187 +520,86 @@ puts "    #{two_years_ago_projects.size} projects created"
 # Most bids still in :drafting; some projects have no bids yet.
 # ============================================================
 
-puts "  Creating 20 drafting projects..."
+puts "  Creating drafting projects..."
 
-due_date_configs = [
-  # [date_offset_days, label]
-  *Array.new(4)  { [ rand(0..2),   :warning ] },   # due within 2 days
-  *Array.new(2)  { [ -rand(2..5),  :overdue ] },    # overdue
-  *Array.new(14) { [ rand(5..42),  :future ]  }    # future
-].shuffle
+def create_drafting_projects(count:, contractors:, bid_users:, used_names:, company:)
+  due_date_configs = [
+    # [date_offset_days, label]
+    *Array.new((count * 0.2).to_i)  { [ rand(0..2),   :warning ] },   # due within 2 days
+    *Array.new((count * 0.1).to_i)  { [ -rand(2..5),  :overdue ] },    # overdue
+    *Array.new((count * 0.7).to_i)  { [ rand(5..42),  :future ]  }    # future
+  ].shuffle
 
-due_date_configs.each_with_index do |config, i|
-  days_offset = config[0]
-  bid_due_at  = Date.today + days_offset
+  due_date_configs.each_with_index do |config, i|
+    days_offset = config[0]
+    bid_due_at  = Date.today + days_offset
 
-  type     = PROJECT_TYPES.sample
-  location = SD_LOCATIONS.sample
-  name     = generate_project_name(type, used_project_names)
+    type     = PROJECT_TYPES.sample
+    location = SD_LOCATIONS.sample
+    name     = generate_project_name(type, used_names)
 
-  project = Project.create!(
-    name:                 name,
-    location:             location,
-    project_type:         type,
-    estimated_start_date: Date.today + rand(60..300)
-  )
-
-  gc_count = rand(1..6)
-  gc_list  = contractors.sample(gc_count)
-
-  # Decide how many bids this project has (some have none yet)
-  has_bids = i > 2  # first 3 projects have no bids yet
-
-  next unless has_bids
-
-  base_value = rand(150_000..4_500_000).round(-3)
-
-  gc_list.each do |gc|
-    # Mostly drafting; occasional submitted if it's a slightly older draft
-    status = rand < 0.85 ? :drafting : :submitted
-    submitted_value  = status == :submitted ? rand_value_cluster(base_value) : nil
-    bid_submitted_at = status == :submitted ? bid_due_at - rand(1..5) : nil
-
-    project.bid_submissions.create!(
-      contractor:            gc,
-      user:                  bid_users.sample,
-      status:                status,
-      bid_due_at:            bid_due_at + rand(-2..2),
-      bid_submitted_at:      bid_submitted_at,
-      submitted_value:       submitted_value,
-      probability_percent:   rand(40..70),
-      included_fire_alarm:   [ true, false ].sample,
-      included_low_voltage:  [ true, false ].sample,
-      base_scope_description: SCOPE_DESCRIPTIONS.sample
-    )
-  end
-end
-
-puts "    #{20} drafting projects created"
-
-# ============================================================
-# REBIDS – ~5% of all projects
-#
-# Rules:
-#   - Source project must be lost
-#   - Rebid resets status to drafting, clears dates/values
-#   - At least one 3-deep chain (rebid of a rebid)
-#   - Rebid projects are included in this year's pipeline
-# ============================================================
-
-puts "  Creating rebid projects..."
-
-all_projects = Project.all.to_a
-total_projects = all_projects.size
-rebid_count = 2
-
-# Candidates: projects that have at least one lost bid, no awarded bids, and are not already rebids
-already_rebound_ids = Project.where.not(rebid_of_id: nil).pluck(:rebid_of_id).compact
-awarded_project_ids = BidSubmission.where(status: :awarded).pluck(:project_id).uniq
-lost_project_ids    = BidSubmission.where(status: :lost).pluck(:project_id).uniq
-
-rebid_candidates = Project
-  .where(id: lost_project_ids)
-  .where.not(id: awarded_project_ids)
-  .where.not(id: already_rebound_ids)
-  .where(rebid_of_id: nil)
-  .to_a
-  .sample(rebid_count + 5)
-  .first(rebid_count)
-
-created_rebids = []
-
-rebid_candidates.each_with_index do |original, i|
-  type     = original.project_type
-  location = original.location
-  name     = "#{original.name} – Rebid"
-
-  next if used_project_names.include?(name)
-  used_project_names.add(name)
-
-  rebid = Project.create!(
-    name:                 name,
-    location:             location,
-    project_type:         type,
-    estimated_start_date: Date.today + rand(45..180),
-    rebid_of_id:          original.id
-  )
-
-  # Backdate created_at so the rebid sorts near its source project, not clumped at the end
-  rebid.update_columns(created_at: original.created_at + rand(1..7).days)
-
-  # Rebid gets fresh drafting bids mirroring original GCs
-  gc_list    = original.bid_submissions.map(&:contractor).uniq
-  base_value = rand(150_000..4_500_000).round(-3)
-  bid_due_at = Date.today + rand(7..30)
-
-  gc_list.each do |gc|
-    rebid.bid_submissions.create!(
-      contractor:            gc,
-      user:                  bid_users.sample,
-      status:                :drafting,
-      bid_due_at:            bid_due_at + rand(-2..2),
-      probability_percent:   rand(35..65),
-      included_fire_alarm:   [ true, false ].sample,
-      included_low_voltage:  [ true, false ].sample,
-      base_scope_description: SCOPE_DESCRIPTIONS.sample
-    )
-  end
-
-  created_rebids << rebid
-end
-
-# Create at least one 3-deep rebid chain (rebid of a rebid)
-if created_rebids.any?
-  second_gen = created_rebids.first
-  third_name = "#{second_gen.name} – Round 3"
-
-  unless used_project_names.include?(third_name)
-    used_project_names.add(third_name)
-
-    # Mark second gen as lost first
-    second_gen.bid_submissions.each do |bid|
-      if bid.drafting?
-        bid.update_columns(
-          status:           BidSubmission.statuses[:lost],
-          submitted_value:  rand(200_000..3_000_000).round(-3),
-          bid_submitted_at: Date.today - rand(20..45),
-          award_decision_at: Date.today - rand(5..15)
-        )
-      end
-    end
-
-    third_gen = Project.create!(
-      name:                 third_name,
-      location:             second_gen.location,
-      project_type:         second_gen.project_type,
-      estimated_start_date: Date.today + rand(60..180),
-      rebid_of_id:          second_gen.id
+    project = Project.create!(
+      name:                 name,
+      location:             location,
+      project_type:         type,
+      estimated_start_date: Date.today + rand(60..300),
+      company:              company
     )
 
-    # Backdate so it sorts near the second-gen project
-    third_gen.update_columns(created_at: second_gen.created_at + rand(1..7).days)
+    gc_count = rand(1..6)
+    gc_list  = contractors.sample(gc_count)
 
-    gc_list    = second_gen.bid_submissions.map(&:contractor).uniq
-    bid_due_at = Date.today + rand(10..25)
+    # Decide how many bids this project has (some have none yet)
+    has_bids = i > 2  # first 3 projects have no bids yet
+
+    next unless has_bids
+
+    base_value = rand(150_000..4_500_000).round(-3)
 
     gc_list.each do |gc|
-      third_gen.bid_submissions.create!(
+      # Mostly drafting; occasional submitted if it's a slightly older draft
+      status = rand < 0.85 ? :drafting : :submitted
+      submitted_value  = status == :submitted ? rand_value_cluster(base_value) : nil
+      bid_submitted_at = status == :submitted ? bid_due_at - rand(1..5) : nil
+
+      project.bid_submissions.create!(
         contractor:            gc,
         user:                  bid_users.sample,
-        status:                :drafting,
+        status:                status,
         bid_due_at:            bid_due_at + rand(-2..2),
-        probability_percent:   rand(30..60),
+        bid_submitted_at:      bid_submitted_at,
+        submitted_value:       submitted_value,
+        probability_percent:   rand(40..70),
         included_fire_alarm:   [ true, false ].sample,
         included_low_voltage:  [ true, false ].sample,
         base_scope_description: SCOPE_DESCRIPTIONS.sample
       )
     end
-
-    puts "    3-deep rebid chain: #{second_gen.rebid_of&.name} → #{second_gen.name} → #{third_gen.name}"
   end
 end
 
-puts "    #{Project.where.not(rebid_of_id: nil).count} rebid projects created (including 3rd-round chain)"
+create_drafting_projects(
+  count: 20,
+  contractors: contractors_a,
+  bid_users: bid_users_a,
+  used_names: used_project_names,
+  company: company_a
+)
+
+create_drafting_projects(
+  count: 10,
+  contractors: contractors_b,
+  bid_users: bid_users_b,
+  used_names: used_project_names,
+  company: company_b
+)
+
+puts "    Company A: 20 drafting projects, Company B: 10 drafting projects"
+
+# ============================================================
+# NOTE: Rebids omitted for simplicity in this seed file.
+# The rebid_of_id feature is available but not seeded.
+# ============================================================
 
 # ============================================================
 # Summary
@@ -601,10 +607,23 @@ puts "    #{Project.where.not(rebid_of_id: nil).count} rebid projects created (i
 
 puts ""
 puts "Done!"
+puts "  Companies:      #{Company.count}"
 puts "  Users:          #{User.count}"
 puts "  Contractors:    #{Contractor.count}"
 puts "  Projects:       #{Project.count}"
 puts "  Bid Submissions:#{BidSubmission.count}"
+puts ""
+
+puts "  Company A (Batray Electric):"
+puts "    Projects:       #{company_a.projects.count}"
+puts "    Contractors:    #{company_a.contractors.count}"
+puts "    Users:          #{company_a.users.count}"
+puts ""
+
+puts "  Company B (Stingray Electrical):"
+puts "    Projects:       #{company_b.projects.count}"
+puts "    Contractors:    #{company_b.contractors.count}"
+puts "    Users:          #{company_b.users.count}"
 puts ""
 
 status_counts = BidSubmission.group(:status).count
@@ -613,12 +632,6 @@ BidSubmission.statuses.each_key do |s|
 end
 
 puts ""
-metric_bids = BidSubmission.for_metrics
-if metric_bids.any?
-  win_rate = BidSubmission.win_rate
-  puts "  Win Rate (count): #{win_rate}%"
-  puts "  Dollar Win Rate:  #{BidSubmission.dollar_win_rate}%"
-end
-
-puts ""
-puts "Login: user@example.com / password"
+puts "Login credentials:"
+puts "  Company A: user@example.com / password"
+puts "  Company B: rachel@stingray.com / password"

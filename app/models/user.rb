@@ -4,10 +4,12 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
-  enum :role, { admin: 0, estimator: 1, viewer: 2 }, default: :estimator
+  enum :role, { admin: "admin", estimator: "estimator", viewer: "viewer" }, default: :estimator
 
+  belongs_to :company
   has_many :bid_submissions, dependent: :destroy
 
   validates :name, presence: true
   validates :role, presence: true
+  validates :company_id, presence: true
 end

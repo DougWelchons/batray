@@ -55,7 +55,11 @@ class ProjectsController < ApplicationController
 
     today = Date.current
 
-    drafting_bids = BidSubmission.kept.where(status: :drafting)
+    # Use joins to scope by company - policy_scope already includes .kept
+    drafting_bids = BidSubmission.joins(:project)
+      .where(projects: { company_id: current_user.company_id })
+      .kept
+      .where(status: :drafting)
 
     @bids_due_count = drafting_bids
       .select(:project_id).distinct.count
@@ -77,13 +81,14 @@ class ProjectsController < ApplicationController
   end
 
   def new
-    @project = Project.new
+    @project = Project.new(company: current_user.company)
     @project.bid_submissions.build
     authorize @project
   end
 
   def create
     @project = Project.new(project_params)
+    @project.company = Current.company
     authorize @project
 
     # Assign current user to all bid submissions
@@ -143,7 +148,7 @@ class ProjectsController < ApplicationController
   private
 
   def set_project
-    @project = Project.kept.find(params[:id])
+    @project = policy_scope(Project.kept).find(params[:id])
   end
 
   def project_params

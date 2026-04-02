@@ -1,6 +1,7 @@
 class Project < ApplicationRecord
   include Discard::Model
 
+  belongs_to :company
   has_many :bid_submissions, dependent: :destroy, inverse_of: :project
   belongs_to :rebid_of, class_name: "Project", optional: true
   has_many :rebids, class_name: "Project", foreign_key: :rebid_of_id, dependent: :nullify
@@ -8,6 +9,7 @@ class Project < ApplicationRecord
   accepts_nested_attributes_for :bid_submissions, allow_destroy: true, reject_if: :all_blank
 
   validates :name, presence: true
+  validates :company_id, presence: true
 
   scope :active, -> { kept }
 

@@ -5,6 +5,9 @@ class BidSubmission < ApplicationRecord
   belongs_to :contractor
   belongs_to :user
 
+  # Access company through project
+  delegate :company, to: :project
+
   enum :status, {
     drafting: 0,
     submitted: 1,

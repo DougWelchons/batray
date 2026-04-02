@@ -11,12 +11,13 @@ class ContractorsController < ApplicationController
   end
 
   def new
-    @contractor = Contractor.new
+    @contractor = Contractor.new(company: current_user.company)
     authorize @contractor
   end
 
   def create
     @contractor = Contractor.new(contractor_params)
+    @contractor.company = Current.company
     authorize @contractor
 
     if @contractor.save
@@ -49,7 +50,7 @@ class ContractorsController < ApplicationController
   private
 
   def set_contractor
-    @contractor = Contractor.find(params[:id])
+    @contractor = policy_scope(Contractor).find(params[:id])
   end
 
   def contractor_params
