@@ -1,0 +1,22 @@
+{
+  "name": "batray",
+  "private": true,
+  "dependencies": {
+    "@reduxjs/toolkit": "^2.11.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-redux": "^9.2.0",
+    "react-router-dom": "^6.30.3"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "esbuild": "^0.27.5"
+  },
+  "scripts": {
+    "build": "esbuild app/javascript/application.js --bundle --sourcemap --format=esm --outdir=app/assets/builds --public-path=/assets --external:@hotwired/turbo-rails --external:chartkick --external:Chart.bundle",
+    "build:spa": "esbuild app/javascript/spa.jsx --bundle --sourcemap --format=esm --outdir=app/assets/builds --public-path=/assets",
+    "build:all": "npm run build && npm run build:spa",
+    "build:css": "tailwindcss -i ./app/assets/stylesheets/application.tailwind.css -o ./app/assets/builds/application.css --minify"
+  }
+}

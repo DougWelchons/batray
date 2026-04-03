@@ -1,0 +1,2 @@
+web: PORT=3000 RAILS_LOG_TO_STDOUT=true bundle exec puma -C config/puma.rb
+js: npm run build:spa -- --watch
