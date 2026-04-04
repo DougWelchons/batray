@@ -17,6 +17,10 @@ gem "stimulus-rails"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
 
+# API serialization
+gem "rabl"
+gem "oj" # Fast JSON parser for RABL
+
 # Authentication
 gem "devise"
 

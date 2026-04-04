@@ -3,18 +3,16 @@ class Api::V1::ProjectsController < Api::V1::BaseController
 
   def index
     @projects = @company.projects.kept
-    render json: @projects.as_json(only: [:id, :name, :location, :project_type, :estimated_start_date, :rebid_of_id, :created_at, :updated_at])
   end
 
   def show
-    render json: @project.as_json(only: [:id, :name, :location, :project_type, :estimated_start_date, :rebid_of_id, :created_at, :updated_at])
   end
 
   def create
     @project = @company.projects.build(project_params)
 
     if @project.save
-      render json: @project.as_json(only: [:id, :name, :location, :project_type, :estimated_start_date, :rebid_of_id, :created_at, :updated_at]), status: :created
+      render :show, status: :created
     else
       render json: { errors: @project.errors.full_messages }, status: :unprocessable_entity
     end
@@ -22,7 +20,7 @@ class Api::V1::ProjectsController < Api::V1::BaseController
 
   def update
     if @project.update(project_params)
-      render json: @project.as_json(only: [:id, :name, :location, :project_type, :estimated_start_date, :rebid_of_id, :created_at, :updated_at])
+      render :show
     else
       render json: { errors: @project.errors.full_messages }, status: :unprocessable_entity
     end

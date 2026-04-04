@@ -1,5 +1,6 @@
 class BidSubmission < ApplicationRecord
   include Discard::Model
+  default_scope -> { undiscarded }
 
   belongs_to :project, inverse_of: :bid_submissions
   belongs_to :contractor
@@ -43,9 +44,8 @@ class BidSubmission < ApplicationRecord
   validates :contractor_id, uniqueness: { scope: :project_id, message: "already has a bid for this project" }
 
   # Scopes for metrics
-  scope :for_metrics, -> { kept.where(status: [ :submitted, :awarded, :lost ]) }
-  scope :won, -> { kept.where(status: :awarded) }
-  scope :active, -> { kept }
+  scope :for_metrics, -> { where(status: [ :submitted, :awarded, :lost ]) }
+  scope :won, -> { where(status: :awarded) }
 
   # Win rate helpers
   def self.win_rate

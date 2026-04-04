@@ -3,18 +3,16 @@ class Api::V1::ContractorsController < Api::V1::BaseController
 
   def index
     @contractors = @company.contractors
-    render json: @contractors.as_json(only: [:id, :name, :contact_name, :email, :phone, :notes, :created_at, :updated_at])
   end
 
   def show
-    render json: @contractor.as_json(only: [:id, :name, :contact_name, :email, :phone, :notes, :created_at, :updated_at])
   end
 
   def create
     @contractor = @company.contractors.build(contractor_params)
 
     if @contractor.save
-      render json: @contractor.as_json(only: [:id, :name, :contact_name, :email, :phone, :notes, :created_at, :updated_at]), status: :created
+      render :show, status: :created
     else
       render json: { errors: @contractor.errors.full_messages }, status: :unprocessable_entity
     end
@@ -22,7 +20,7 @@ class Api::V1::ContractorsController < Api::V1::BaseController
 
   def update
     if @contractor.update(contractor_params)
-      render json: @contractor.as_json(only: [:id, :name, :contact_name, :email, :phone, :notes, :created_at, :updated_at])
+      render :show
     else
       render json: { errors: @contractor.errors.full_messages }, status: :unprocessable_entity
     end

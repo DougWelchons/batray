@@ -3,18 +3,16 @@ class Api::V1::UsersController < Api::V1::BaseController
 
   def index
     @users = @company.users
-    render json: @users.as_json(only: [:id, :name, :email, :role, :created_at, :updated_at])
   end
 
   def show
-    render json: @user.as_json(only: [:id, :name, :email, :role, :created_at, :updated_at])
   end
 
   def create
     @user = @company.users.build(user_params)
 
     if @user.save
-      render json: @user.as_json(only: [:id, :name, :email, :role, :created_at, :updated_at]), status: :created
+      render :show, status: :created
     else
       render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
     end
@@ -22,7 +20,7 @@ class Api::V1::UsersController < Api::V1::BaseController
 
   def update
     if @user.update(user_params)
-      render json: @user.as_json(only: [:id, :name, :email, :role, :created_at, :updated_at])
+      render :show
     else
       render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
     end
