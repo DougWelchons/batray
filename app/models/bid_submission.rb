@@ -61,6 +61,18 @@ class BidSubmission < ApplicationRecord
     (metric_bids.where(status: :awarded).sum(:awarded_value) / total_submitted * 100).round(1)
   end
 
+  def project_name
+    project.name
+  end
+
+  def contractor_name
+    contractor.name
+  end
+
+  def estimators_name
+    user.full_name
+  end
+
   private
 
   def award_decision_after_bid_submitted

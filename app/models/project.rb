@@ -44,6 +44,20 @@ class Project < ApplicationRecord
     end
   end
 
+  def project_due_status
+    return nil unless bid_submissions.drafting.any?
+
+    if earliest_bid_due_at.nil?
+      "no-due-date"
+    elsif earliest_bid_due_at < Time.current
+      "overdue"
+    elsif earliest_bid_due_at <= 2.days.from_now
+      "due-soon"
+    else
+      "on-track"
+    end
+  end
+
 
   def bid_due_urgency_class
     return nil unless bid_submissions.drafting.any?

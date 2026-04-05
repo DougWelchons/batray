@@ -12,4 +12,8 @@ class User < ApplicationRecord
   validates :name, presence: true
   validates :role, presence: true
   validates :company_id, presence: true
+
+  def full_name
+    name
+  end
 end

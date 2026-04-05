@@ -34,7 +34,7 @@ class Api::V1::ContractorsController < Api::V1::BaseController
   private
 
   def set_contractor
-    @contractor = @company.contractors.find(params[:id])
+    @contractor = @company.contractors.includes(:bid_submissions, :contacts).find(params[:id])
   end
 
   def contractor_params

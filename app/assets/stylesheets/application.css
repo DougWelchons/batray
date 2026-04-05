@@ -28,6 +28,13 @@
   --status-lost:        #B4533A;
   --status-archived:    #857A72;
 
+  --status-open-bg:     #3B82F622;
+  --status-in-progress-bg: #D4A01722;
+  --status-submitted-bg: #4C6EF522;
+  --status-awarded-bg:  #2F855A22;
+  --status-lost-bg:     #B4533A22;
+  --status-archived-bg: #857A7222;
+
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -325,6 +332,11 @@ ul, ol { list-style: none; }
   display: inline-flex;
   align-items: center;
   gap: var(--space-1);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
 }
 .sort-link:hover { color: var(--color-text-primary); }
 .sort-link--active { color: var(--color-accent); }
@@ -345,8 +357,16 @@ ul, ol { list-style: none; }
 .project-row--drafting  td:first-child .link { color: var(--status-in-progress); }
 .project-row--inactive  td:first-child .link { color: var(--status-archived); }
 
-.bid-due--warning { color: var(--status-in-progress); font-weight: 500; }
-.bid-due--overdue { color: var(--status-lost); font-weight: 500; }
+.table tbody td.bid-due--warning {
+  color: var(--status-in-progress);
+  font-weight: 500;
+  /* background-color: var(--status-in-progress-bg); */
+}
+.table tbody td.bid-due--overdue {
+  color: var(--status-lost);
+  font-weight: 500;
+  /* background-color: var(--status-lost-bg); */
+}
 
 /* ===========================================================
    9. FILTER BAR
