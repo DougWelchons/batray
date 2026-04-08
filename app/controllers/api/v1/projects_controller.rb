@@ -2,7 +2,7 @@ class Api::V1::ProjectsController < Api::V1::BaseController
   before_action :set_project, only: [:show, :update, :destroy]
 
   def index
-    @projects = @company.projects.kept
+    @projects = @company.projects.kept.includes(:bid_submissions)
   end
 
   def show
@@ -34,7 +34,7 @@ class Api::V1::ProjectsController < Api::V1::BaseController
   private
 
   def set_project
-    @project = @company.projects.kept.find(params[:id])
+    @project = @company.projects.kept.includes(:bid_submissions).find(params[:id])
   end
 
   def project_params

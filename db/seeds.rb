@@ -11,6 +11,7 @@ puts "  Clearing existing data..."
 # Clear in dependency order so we can re-run safely
 BidSubmission.unscoped.delete_all
 Project.unscoped.delete_all
+Contact.unscoped.delete_all
 Contractor.unscoped.delete_all
 User.unscoped.delete_all
 Company.unscoped.delete_all
@@ -164,21 +165,21 @@ puts "  #{User.count} users (Company A: #{company_a.users.count}, Company B: #{c
 puts "  Creating contractors..."
 
 gc_data = [
-  { name: "McCarthy Building Companies",  contact_name: "Brian Holloway",   email: "bholloway@mccarthy.com",         phone: "619-555-0101" },
-  { name: "Rudolph and Sletten",          contact_name: "Diane Park",       email: "dpark@rsconstruction.com",       phone: "619-555-0118" },
-  { name: "Turner Construction",          contact_name: "Paul Marsh",       email: "pmarsh@tcco.com",                phone: "619-555-0134" },
-  { name: "DPR Construction",             contact_name: "Carla Diaz",       email: "cdiaz@dprinc.com",               phone: "619-555-0152" },
-  { name: "Hensel Phelps",               contact_name: "Brad Kowalski",    email: "bkowalski@henselphelps.com",     phone: "858-555-0167" },
-  { name: "Kitchell Contractors",         contact_name: "Greg Salazar",     email: "gsalazar@kitchell.com",          phone: "619-555-0183" },
-  { name: "Clark Construction Group",     contact_name: "Tamara Wells",     email: "twells@clarkconstruction.com",   phone: "858-555-0199" },
-  { name: "Swinerton Builders",           contact_name: "Nate Fujimoto",    email: "nfujimoto@swinerton.com",        phone: "619-555-0214" },
-  { name: "Balfour Beatty Construction",  contact_name: "Renee Albright",   email: "ralbright@balfourbeatty.com",    phone: "858-555-0230" },
-  { name: "Sundt Construction",           contact_name: "Victor Olsen",     email: "volsen@sundt.com",               phone: "619-555-0247" },
-  { name: "Webcor Builders",              contact_name: "Amy Vance",        email: "avance@webcor.com",              phone: "858-555-0261" },
-  { name: "Skanska USA Building",         contact_name: "Derek Finch",      email: "dfinch@skanska.com",             phone: "619-555-0278" },
-  { name: "Gilbane Building Company",     contact_name: "Monica Stein",     email: "mstein@gilbaneco.com",           phone: "619-555-0293" },
-  { name: "Soltek Pacific Construction",  contact_name: "James Okafor",     email: "jokafor@soltekpacific.com",      phone: "619-555-0309" },
-  { name: "Lusardi Construction",         contact_name: "Rachel Torrez",    email: "rtorrez@lusardiconstruction.com", phone: "760-555-0324" }
+  { name: "McCarthy Building Companies",  phone: "619-555-0101" },
+  { name: "Rudolph and Sletten",          phone: "619-555-0118" },
+  { name: "Turner Construction",          phone: "619-555-0134" },
+  { name: "DPR Construction",             phone: "619-555-0152" },
+  { name: "Hensel Phelps",                phone: "858-555-0167" },
+  { name: "Kitchell Contractors",         phone: "619-555-0183" },
+  { name: "Clark Construction Group",     phone: "858-555-0199" },
+  { name: "Swinerton Builders",           phone: "619-555-0214" },
+  { name: "Balfour Beatty Construction",  phone: "858-555-0230" },
+  { name: "Sundt Construction",           phone: "619-555-0247" },
+  { name: "Webcor Builders",              phone: "858-555-0261" },
+  { name: "Skanska USA Building",         phone: "619-555-0278" },
+  { name: "Gilbane Building Company",     phone: "619-555-0293" },
+  { name: "Soltek Pacific Construction",  phone: "619-555-0309" },
+  { name: "Lusardi Construction",         phone: "760-555-0324" }
 ].freeze
 
 # Split contractors between companies
@@ -187,27 +188,71 @@ gc_data_b = gc_data[10..14] # Last 5 for Company B
 
 contractors_a = gc_data_a.map do |attrs|
   Contractor.create!(
-    name:         attrs[:name],
-    contact_name: attrs[:contact_name],
-    email:        attrs[:email],
-    phone:        attrs[:phone],
-    company:      company_a
+    name:    attrs[:name],
+    phone:   attrs[:phone],
+    company: company_a
   )
 end
 
 contractors_b = gc_data_b.map do |attrs|
   Contractor.create!(
-    name:         attrs[:name],
-    contact_name: attrs[:contact_name],
-    email:        attrs[:email],
-    phone:        attrs[:phone],
-    company:      company_b
+    name:    attrs[:name],
+    phone:   attrs[:phone],
+    company: company_b
   )
 end
 
 contractors = contractors_a + contractors_b
 
 puts "  #{Contractor.count} contractors (Company A: #{contractors_a.count}, Company B: #{contractors_b.count})"
+
+# ============================================================
+# Contacts – 2-5 per contractor
+# ============================================================
+
+puts "  Creating contacts..."
+
+contact_first_names = [
+  "Brian", "Diane", "Paul", "Carla", "Brad", "Greg", "Tamara", "Nate", "Renee", "Victor",
+  "Amy", "Derek", "Monica", "James", "Rachel", "Kevin", "Linda", "Michael", "Sarah", "Tom",
+  "Jessica", "David", "Emily", "Chris", "Ashley", "Matt", "Lauren", "Andrew", "Nicole", "Ryan"
+]
+
+contact_last_names = [
+  "Holloway", "Park", "Marsh", "Diaz", "Kowalski", "Salazar", "Wells", "Fujimoto", "Albright", "Olsen",
+  "Vance", "Finch", "Stein", "Okafor", "Torrez", "Martinez", "Chen", "Rodriguez", "Anderson", "Thompson",
+  "Garcia", "Wilson", "Lee", "Taylor", "Brown", "Davis", "Miller", "Moore", "Jackson", "White"
+]
+
+total_contacts = 0
+
+contractors.each do |contractor|
+  contact_count = rand(2..5)
+
+  contact_count.times do |i|
+    first_name = contact_first_names.sample
+    last_name = contact_last_names.sample
+    name = "#{first_name} #{last_name}"
+
+    # Generate unique email using index to avoid duplicates
+    email = "#{first_name.downcase}.#{last_name.downcase}#{i > 0 ? i : ''}@#{contractor.name.parameterize}.com"
+
+    # Vary phone slightly from contractor phone
+    base_phone = contractor.phone.gsub(/\D/, '')
+    varied_phone = base_phone[0..-3] + rand(10..99).to_s
+
+    Contact.create!(
+      contractor: contractor,
+      name: name,
+      email: email,
+      phone: varied_phone
+    )
+
+    total_contacts += 1
+  end
+end
+
+puts "  #{Contact.count} contacts created"
 
 # ============================================================
 # Project name generation – realistic SD-area construction
@@ -610,6 +655,7 @@ puts "Done!"
 puts "  Companies:      #{Company.count}"
 puts "  Users:          #{User.count}"
 puts "  Contractors:    #{Contractor.count}"
+puts "  Contacts:       #{Contact.count}"
 puts "  Projects:       #{Project.count}"
 puts "  Bid Submissions:#{BidSubmission.count}"
 puts ""

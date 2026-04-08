@@ -38,7 +38,10 @@ Rails.application.routes.draw do
       resource :current_user, only: [ :show ]
       resources :users, only: [ :index, :show, :create, :update, :destroy ]
       resources :projects, only: [ :index, :show, :create, :update, :destroy ]
-      resources :contractors, only: [ :index, :show, :create, :update, :destroy ]
+      resources :contractors, only: [ :index, :show, :create, :update, :destroy ] do
+        resources :contacts, only: [ :index ]
+      end
+      resources :contacts, only: [ :create, :update, :destroy ]
       resources :bid_submissions, only: [ :index, :show, :create, :update, :destroy ]
     end
   end

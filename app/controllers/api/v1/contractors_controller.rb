@@ -1,8 +1,8 @@
 class Api::V1::ContractorsController < Api::V1::BaseController
-  before_action :set_contractor, only: [:show, :update, :destroy]
+  before_action :set_contractor, only: [ :show, :update, :destroy ]
 
   def index
-    @contractors = @company.contractors
+    @contractors = @company.contractors.includes(:contacts, bid_submissions: [ :project, :contractor, :user ])
   end
 
   def show
@@ -34,7 +34,7 @@ class Api::V1::ContractorsController < Api::V1::BaseController
   private
 
   def set_contractor
-    @contractor = @company.contractors.includes(:bid_submissions, :contacts).find(params[:id])
+    @contractor = @company.contractors.includes(:contacts, bid_submissions: [ :project, :contractor, :user ]).find(params[:id])
   end
 
   def contractor_params

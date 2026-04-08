@@ -422,6 +422,7 @@ ul, ol { list-style: none; }
 }
 
 .form__row { display: flex; gap: var(--space-5); margin-bottom: var(--space-4); }
+.form__row--cols-1 { display: grid; grid-template-columns: 1fr; gap: var(--space-5); margin-bottom: var(--space-4); }
 .form__row--cols-2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); margin-bottom: var(--space-4); }
 .form__row--cols-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--space-5); margin-bottom: var(--space-4); }
 

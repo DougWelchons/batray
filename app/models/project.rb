@@ -13,11 +13,19 @@ class Project < ApplicationRecord
   validates :company_id, presence: true
 
   def earliest_bid_due_at
-    bid_submissions.minimum(:bid_due_at)
+    if association(:bid_submissions).loaded?
+      bid_submissions.map(&:bid_due_at).compact.min
+    else
+      bid_submissions.minimum(:bid_due_at)
+    end
   end
 
   def bid_count
-    bid_submissions.count
+    if association(:bid_submissions).loaded?
+      bid_submissions.size
+    else
+      bid_submissions.count
+    end
   end
 
   def duplicate_for_rebid
@@ -29,7 +37,11 @@ class Project < ApplicationRecord
   end
 
   def project_status
-    statuses = bid_submissions.pluck(:status)
+    statuses = if association(:bid_submissions).loaded?
+      bid_submissions.map(&:status)
+    else
+      bid_submissions.pluck(:status)
+    end
 
     if statuses.include?("awarded")
       "awarded"
@@ -45,7 +57,13 @@ class Project < ApplicationRecord
   end
 
   def project_due_status
-    return nil unless bid_submissions.drafting.any?
+    drafting_bids = if association(:bid_submissions).loaded?
+      bid_submissions.select { |bs| bs.status == "drafting" }
+    else
+      bid_submissions.drafting
+    end
+
+    return nil unless drafting_bids.any?
 
     if earliest_bid_due_at.nil?
       "no-due-date"
@@ -60,9 +78,20 @@ class Project < ApplicationRecord
 
 
   def bid_due_urgency_class
-    return nil unless bid_submissions.drafting.any?
+    drafting_bids = if association(:bid_submissions).loaded?
+      bid_submissions.select { |bs| bs.status == "drafting" }
+    else
+      bid_submissions.drafting
+    end
 
-    due = bid_submissions.drafting.minimum(:bid_due_at)
+    return nil unless drafting_bids.any?
+
+    due = if association(:bid_submissions).loaded?
+      drafting_bids.map(&:bid_due_at).compact.min
+    else
+      bid_submissions.drafting.minimum(:bid_due_at)
+    end
+
     return nil unless due
 
     days = (due.to_date - Date.today).to_i
@@ -77,7 +106,12 @@ class Project < ApplicationRecord
     subs = bid_submissions
     return "project-row--drafting" if subs.none?
 
-    statuses = subs.pluck(:status)
+    statuses = if association(:bid_submissions).loaded?
+      subs.map(&:status)
+    else
+      subs.pluck(:status)
+    end
+
     if statuses.include?("awarded")
       "project-row--awarded"
     elsif statuses.all? { |s| %w[lost withdrawn declined].include?(s) } && statuses.any? { |s| s == "lost" }
