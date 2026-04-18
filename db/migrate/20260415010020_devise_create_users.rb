@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-class DeviseCreateUsers < ActiveRecord::Migration[8.2]
+class DeviseCreateUsers < ActiveRecord::Migration[8.0]
   def change
-    create_table :users do |t|
+    create_table :users, id: :uuid do |t|
       ## Database authenticatable
       t.string :email,              null: false, default: ""
       t.string :encrypted_password, null: false, default: ""
@@ -32,10 +32,12 @@ class DeviseCreateUsers < ActiveRecord::Migration[8.2]
       # t.string   :unlock_token # Only if unlock strategy is :email or :both
       # t.datetime :locked_at
 
-      t.string :name
-      t.integer :role
+      t.string :first_name
+      t.string :last_name
+      t.string :role
 
       t.timestamps null: false
+      t.references :company, null: false, foreign_key: true, type: :uuid
     end
 
     add_index :users, :email,                unique: true
