@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from "react-router-dom";
 import FormField from './forms/FormField';
 import { useHeader } from '../spa/HeaderContext';
@@ -13,7 +13,7 @@ export default function ContractorsForm() {
     state.contractors.items.find((c) => c.id === id)
   ) : {};
   const defaultData = { name: "", phone: "", address: "", city: "", state: "", zip_code: "" };
-  const [formData, setFormData] = React.useState({ ...defaultData, ...contractor });
+  const [formData, setFormData] = useState({ ...defaultData, ...contractor });
 
   useEffect(() => {
     if (id) {

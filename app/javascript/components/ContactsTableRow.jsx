@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { createContact, updateContact, deleteContact } from "../spa/store/slices/contactsSlice";
 import FormField from "./forms/FormField";
@@ -6,10 +6,10 @@ import FormField from "./forms/FormField";
 export default function ContactsTableRow({ contact = {}, contractorId, onChange = () => {}, autoSave = true, handleCancel = () => {}, handleSave = () => {} }) {
   const dispatch = useDispatch();
   const defaultData = { name: "", email: "", phone: "", role: "", contractor_id: contractorId };
-  const [isEditing, setIsEditing] = React.useState(!contact.id);
-  const [formData, setFormData] = React.useState({ ...defaultData, ...contact, contractor_id: contractorId });
-  const [saving, setSaving] = React.useState(false);
-  const [saveError, setSaveError] = React.useState(null);
+  const [isEditing, setIsEditing] = useState(!contact.id);
+  const [formData, setFormData] = useState({ ...defaultData, ...contact, contractor_id: contractorId });
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;

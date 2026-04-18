@@ -1,12 +1,12 @@
-import React from "react";
+import React, { useState, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 export default function ProjectsTable() {
   const projects = useSelector(state => state.projects.items);
   const classifications = useSelector(state => state.classifications.items);
-  const [sortColumn, setSortColumn] = React.useState("bid_due_at");
-  const [sortDirection, setSortDirection] = React.useState("desc");
+  const [sortColumn, setSortColumn] = useState("bid_due_at");
+  const [sortDirection, setSortDirection] = useState("desc");
 
   const formatDate = (dateString) => {
     if (!dateString) return null;
@@ -37,7 +37,7 @@ export default function ProjectsTable() {
     }
   }
 
-  const sortedProjects = React.useMemo(() => {
+  const sortedProjects = useMemo(() => {
     if (!projects) return [];
 
     const sorted = [...projects].sort((a, b) => {

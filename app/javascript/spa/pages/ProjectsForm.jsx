@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createProject, fetchProject, updateProject } from "../store/slices/projectsSlice";
 import { useHeader } from "../HeaderContext";
@@ -15,8 +15,8 @@ export default function ProjectsForm() {
   const project = useSelector(state => id ? state.projects.items.find(p => p.id === id) : {});
   const defaultData = { id: "", name: "", street: "", city: "", state: "", zip_code: "", classification_ids: [], estimated_start_date: "" };
   const defaultBidData = { contractor_id: "", contact_id: "", bid_due_at: "", submitted_value: "", fa: "", lv: "", status: "" };
-  const [formData, setFormData] = React.useState({ ...defaultData, ...project });
-  const [bids, setBids] = React.useState(project?.bid_submissions ? project.bid_submissions.map(bid => ({ ...defaultBidData, ...bid })) : []);
+  const [formData, setFormData] = useState({ ...defaultData, ...project });
+  const [bids, setBids] = useState(project?.bid_submissions ? project.bid_submissions.map(bid => ({ ...defaultBidData, ...bid })) : [{ ...defaultBidData, tempId: Date.now() }]);
   const contractors = useSelector(state => state.contractors.items);
   const classifications = useSelector(state => state.classifications.items);
 
@@ -86,7 +86,7 @@ export default function ProjectsForm() {
 
       <div className="form__section">
         <div className="form__section-header">
-          <h2 className="form__section-title">GC Bid Submissions</h2>
+          <h2 className="form__section-title">General Contractors</h2>
           <button type="button" className="btn btn--secondary btn--sm" onClick={addBid}>
             + Add GC
           </button>
@@ -108,7 +108,7 @@ export default function ProjectsForm() {
           <tbody>
             {bids.length > 0 ? bids.map((bid, index) => (
               <ProjectBidForm
-                key={bid.id || bid.tempId}
+                key={bid.id || bid.tempId || index}
                 bid={bid}
                 contractors={contractors}
                 onChange={(e) => {

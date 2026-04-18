@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import ContactsTableRow from "./ContactsTableRow";
 import { fetchContacts } from "../spa/store/slices/contactsSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -6,8 +6,8 @@ import { useDispatch, useSelector } from "react-redux";
 export default function ContactsTable({ contractorId }) {
   const dispatch = useDispatch();
   const existingContacts = useSelector(state => state.contacts.items);
-  const [newContacts, setNewContacts] = React.useState([]);
-  const [contacts, setContacts] = React.useState([...existingContacts, ...newContacts]);
+  const [newContacts, setNewContacts] = useState([]);
+  const [contacts, setContacts] = useState([...existingContacts, ...newContacts]);
 
   useEffect(() => {
     dispatch(fetchContacts(contractorId));
