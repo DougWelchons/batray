@@ -3,25 +3,34 @@ import { useDispatch, useSelector } from "react-redux";
 import { createProject, fetchProject, updateProject } from "../store/slices/projectsSlice";
 import { useHeader } from "../HeaderContext";
 import FormField from "../../components/forms/FormField";
+import MultiSelectDropDown from "../../components/forms/MultiSelectDropDown";
 import { useParams } from "react-router-dom";
 import ProjectBidForm from "../../components/ProjectBidForm";
 import { fetchContractors } from "../store/slices/contractorsSlice";
+import { fetchClassifications } from "../store/slices/classificationsSlice";
 
 export default function ProjectsForm() {
   const dispatch = useDispatch();
   const {id} = useParams();
   const project = useSelector(state => id ? state.projects.items.find(p => p.id === id) : {});
-  const defaultData = { id: "", name: "", location: "", project_type: "", estimated_start_date: "" };
+  const defaultData = { id: "", name: "", location: "", classification_ids: [], estimated_start_date: "" };
   const defaultBidData = { contractor_id: "", contact_id: "", bid_due_at: "", submitted_value: "", fa: "", lv: "", status: "" };
   const [formData, setFormData] = React.useState({ ...defaultData, ...project });
   const [bids, setBids] = React.useState(project?.bid_submissions ? project.bid_submissions.map(bid => ({ ...defaultBidData, ...bid })) : []);
   const contractors = useSelector(state => state.contractors.items);
+  const classifications = useSelector(state => state.classifications.items);
 
   useEffect(() => {
     if (contractors.length === 0) {
       dispatch(fetchContractors());
     }
   }, [dispatch, contractors.length]);
+
+  useEffect(() => {
+    if (classifications.length === 0) {
+      dispatch(fetchClassifications());
+    }
+  }, [dispatch, classifications.length]);
 
   useEffect(() => {
     if (id)
@@ -50,6 +59,8 @@ export default function ProjectsForm() {
 
   useHeader(project?.id ? `Edit ${project.name}` : "Add Project");
 
+  const selectedClassifications = classifications.filter(c => (formData.classification_ids || []).includes(c.id));
+
   return (
     <div className="card">
       <div className="form__row form__row--cols-2">
@@ -58,7 +69,14 @@ export default function ProjectsForm() {
         <FormField label="City" name="city" value={formData.city} onChange={handleChange} />
         <FormField label="State" name="state" value={formData.state} onChange={handleChange} />
         <FormField label="Zip Code" name="zip_code" value={formData.zip_code} onChange={handleChange} />
-        <FormField label="Project Type" name="project_type" value={formData.project_type} onChange={handleChange} />
+        <MultiSelectDropDown
+          label="Project Type"
+          items={classifications}
+          value={selectedClassifications}
+          displayFn={(c) => c.name}
+          searchableColumns={["name"]}
+          onChange={(selected) => setFormData(prev => ({ ...prev, classification_ids: selected.map(c => c.id) }))}
+        />
         <FormField label="Estimated Start Date" name="estimated_start_date" type="date" value={formData.estimated_start_date} onChange={handleChange} />
       </div>
 

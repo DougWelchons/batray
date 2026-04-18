@@ -2,9 +2,9 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
-
 export default function ProjectsTable() {
   const projects = useSelector(state => state.projects.items);
+  const classifications = useSelector(state => state.classifications.items);
   const [sortColumn, setSortColumn] = React.useState("bid_due_at");
   const [sortDirection, setSortDirection] = React.useState("desc");
 
@@ -58,8 +58,8 @@ export default function ProjectsTable() {
           bVal = b.earliest_bid_due_at ? new Date(b.earliest_bid_due_at).getTime() : Infinity;
           break;
         case "project_type":
-          aVal = a.project_type?.toLowerCase() || "";
-          bVal = b.project_type?.toLowerCase() || "";
+          aVal = a.classification_ids?.length || 0;
+          bVal = b.classification_ids?.length || 0;
           break;
         case "estimated_start_date":
           aVal = a.estimated_start_date ? new Date(a.estimated_start_date).getTime() : 0;
@@ -124,11 +124,20 @@ export default function ProjectsTable() {
                 </td>
                 <td>{project.location || "—"}</td>
                 <td className={projectDueDateClass(project)}>{formatDate(project.earliest_bid_due_at) || "—"}</td>
-                <td><span className="tag">{project.project_type || "—"}</span></td>
+                <td>
+                  {(() => {
+                    const ids = project.classification_ids || [];
+                    if (ids.length === 0) return "—";
+                    if (ids.length === 1) {
+                      const name = classifications.find(c => c.id === ids[0])?.name;
+                      return <span className="tag">{name || "—"}</span>;
+                    }
+                    return <span className="tag">{ids.length} types</span>;
+                  })()}
+                </td>
                 <td>{formatDate(project.estimated_start_date) || "—"}</td>
                 <td className="text-right">{project.bid_count}</td>
                 <td className="table__actions">
-                  <Link to={`/projects/${project.id}`} className="btn btn--secondary btn--sm">View</Link>
                   <Link to={`/projects/${project.id}/edit`} className="btn btn--ghost btn--sm">Edit</Link>
                 </td>
               </tr>

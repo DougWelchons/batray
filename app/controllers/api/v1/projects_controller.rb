@@ -43,7 +43,8 @@ class Api::V1::ProjectsController < Api::V1::BaseController
       :location,
       :project_type,
       :estimated_start_date,
-      :rebid_of_id
+      :rebid_of_id,
+      classification_ids: []
     )
   end
 end

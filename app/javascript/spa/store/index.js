@@ -5,6 +5,7 @@ import projectsReducer from './slices/projectsSlice';
 import contractorsReducer from './slices/contractorsSlice';
 import contactsReducer from './slices/contactsSlice';
 import flashReducer from './slices/flashSlice';
+import classificationsReducer from './slices/classificationsSlice';
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
     contractors: contractorsReducer,
     contacts: contactsReducer,
     flash: flashReducer,
+    classifications: classificationsReducer,
   },
 });
 

@@ -46,6 +46,7 @@ Rails.application.routes.draw do
       end
       resources :contacts, only: [ :create, :update, :destroy ]
       resources :bid_submissions, only: [ :index, :show, :create, :update, :destroy ]
+      resources :classifications, only: [ :index ]
     end
   end
 

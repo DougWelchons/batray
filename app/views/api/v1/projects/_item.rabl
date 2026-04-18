@@ -7,6 +7,6 @@ node :bid_submissions do |project|
   end
 end
 
-node :project_type do |project|
-  project.classifications.first&.name || "Unclassified"
+node :classification_ids do |project|
+  project.classifications.map(&:id)
 end

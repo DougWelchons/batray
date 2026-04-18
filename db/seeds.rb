@@ -233,7 +233,7 @@ puts "  Creating classifications..."
 
 CLASSIFICATION_NAMES = %w[
   Office Medical Industrial Retail Education Hospitality Data\ Center Multifamily
-  Mixed-Use Parking Government Religious Healthcare Tenant\ Improvement
+  Mixed-Use Parking Government Healthcare Tenant\ Improvement
 ].freeze
 
 classifications_a = CLASSIFICATION_NAMES.map do |name|
