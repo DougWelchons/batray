@@ -13,7 +13,7 @@ export default function ProjectsForm() {
   const dispatch = useDispatch();
   const {id} = useParams();
   const project = useSelector(state => id ? state.projects.items.find(p => p.id === id) : {});
-  const defaultData = { id: "", name: "", location: "", classification_ids: [], estimated_start_date: "" };
+  const defaultData = { id: "", name: "", street: "", city: "", state: "", zip_code: "", classification_ids: [], estimated_start_date: "" };
   const defaultBidData = { contractor_id: "", contact_id: "", bid_due_at: "", submitted_value: "", fa: "", lv: "", status: "" };
   const [formData, setFormData] = React.useState({ ...defaultData, ...project });
   const [bids, setBids] = React.useState(project?.bid_submissions ? project.bid_submissions.map(bid => ({ ...defaultBidData, ...bid })) : []);
@@ -63,12 +63,16 @@ export default function ProjectsForm() {
 
   return (
     <div className="card">
-      <div className="form__row form__row--cols-2">
+      <div className="form__row form__row--cols-1">
         <FormField label="Name" name="name" value={formData.name} onChange={handleChange} />
         <FormField label="Street" name="street" value={formData.street} onChange={handleChange} />
+      </div>
+      <div className="form__row form__row--cols-3">
         <FormField label="City" name="city" value={formData.city} onChange={handleChange} />
         <FormField label="State" name="state" value={formData.state} onChange={handleChange} />
         <FormField label="Zip Code" name="zip_code" value={formData.zip_code} onChange={handleChange} />
+      </div>
+      <div className="form__row form__row--cols-2">
         <MultiSelectDropDown
           label="Project Type"
           items={classifications}

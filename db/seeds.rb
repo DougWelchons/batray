@@ -71,7 +71,7 @@ REASONS_LOST = [
   "Out-of-area GC preference"
 ].freeze
 
-CONTACT_ROLES = %w[Project\ Manager Estimator Principal VP\ of\ Operations Field\ Superintendent].freeze
+CONTACT_ROLES = %w[Project\ Manager Estimator].freeze
 
 # ============================================================
 # Companies
