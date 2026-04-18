@@ -37,7 +37,10 @@ export default function ProjectShow() {
     <div className="meta-list">
       <div className="meta-item">
         <dt>Location</dt>
-        <dd>{project?.location}</dd>
+        {project && <>
+          <dd>{project.street}</dd>
+          <dd> {project.city} {project.state} {project.zip_code}</dd>
+        </>}
       </div>
       <div className="meta-item">
         <dt>Project Type</dt>
@@ -63,6 +66,10 @@ export default function ProjectShow() {
         <dd>{project?.project_status}</dd>
       </div>
     </div>
+    <div className="form__section-header">
+      <h2 className="form__section-title">Notes</h2>
+    </div>
+    {project?.notes ? <div>{project.notes}</div> : <div> No notes to display</div>}
   </div>
     <CollapsibleCard title="Bid Submissions">
       <BidSubmissionsTable bids={project?.bid_submissions} displayProject={false} />
