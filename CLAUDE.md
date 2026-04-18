@@ -461,6 +461,23 @@ before making assumptions.
 If the design guide does not cover a situation, extend it in a way
 consistent with the established design language.
 
+# API Controller Rules
+
+All `Api::V1` controllers must use RABL views for JSON rendering.
+
+## Requirements
+
+* Never use `render json: @object` for success responses — always delegate to a RABL view.
+* Each resource needs `_item.rabl` (partial), `index.rabl`, and `show.rabl` views.
+* `index.rabl` uses `collection @objects, root: false, object_root: false`.
+* `show.rabl` uses `object @object => nil`.
+* Both `index.rabl` and `show.rabl` extend the `_item` partial.
+* Error responses (`{ errors: ... }`) may still use `render json:` directly.
+* `destroy` actions use `head :no_content` — no RABL needed.
+* If RABL is impractical for a specific case, explain why and ask before using an alternative.
+
+---
+
 # Final Directive for Claude
 
 * Follow this schema exactly.

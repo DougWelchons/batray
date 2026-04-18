@@ -4,24 +4,24 @@ class BidSubmission < ApplicationRecord
 
   belongs_to :project, inverse_of: :bid_submissions
   belongs_to :contractor
-  belongs_to :user
+  belongs_to :user, optional: true
+  belongs_to :contact, optional: true
 
   # Access company through project
   delegate :company, to: :project
 
   enum :status, {
-    drafting: 0,
-    submitted: 1,
-    awarded: 2,
-    lost: 3,
-    withdrawn: 4,
-    declined: 5
+    drafting: "drafting",
+    submitted: "submitted",
+    awarded: "awarded",
+    lost: "lost",
+    withdrawn: "withdrawn",
+    declined: "declined"
   }, default: :drafting
 
   # Validations
   validates :project, presence: true
   validates :contractor_id, presence: true
-  validates :user_id, presence: true
   validates :status, presence: true
   validates :probability_percent, numericality: { in: 0..100 }, allow_nil: true
 
@@ -70,7 +70,7 @@ class BidSubmission < ApplicationRecord
   end
 
   def estimators_name
-    user.full_name
+    user&.full_name
   end
 
   private

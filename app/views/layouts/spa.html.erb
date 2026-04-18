@@ -1,26 +1,20 @@
 <!DOCTYPE html>
 <html data-theme="light">
   <head>
-    <title><%= content_for(:title) || "Batray – Bid Tracker" %></title>
+    <title>Batray – Bid Tracker</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="application-name" content="Batray">
-    <%= csrf_meta_tags %>
-    <%= csp_meta_tag %>
-
-    <%= yield :head %>
 
     <% icon_file = Rails.env.production? ? "icon.png" : "icon-dev.png" %>
     <link rel="icon" href="/<%= icon_file %>?v=6" type="image/png">
     <link rel="apple-touch-icon" href="/<%= icon_file %>?v=6">
 
-    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
-    <%= javascript_importmap_tags %>
+    <%= stylesheet_link_tag :app %>
   </head>
 
   <body class="app-body">
-    <div class="app-main <%= user_signed_in? ? 'app-main--with-sidebar' : '' %>">
-      <%= render "shared/flash" unless @hide_layout_flash %>
+    <div class="app-main app-main--with-sidebar">
       <%= yield %>
     </div>
   </body>

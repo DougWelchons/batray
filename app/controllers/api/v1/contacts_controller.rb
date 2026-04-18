@@ -4,7 +4,6 @@ class Api::V1::ContactsController < Api::V1::BaseController
   def index
     @contractor = @company.contractors.find(params[:contractor_id])
     @contacts = @contractor.contacts
-    render json: @contacts
   end
 
   def create
@@ -12,7 +11,7 @@ class Api::V1::ContactsController < Api::V1::BaseController
     @contact = @contractor.contacts.build(contact_params)
 
     if @contact.save
-      render json: @contact, status: :created
+      render :show, status: :created
     else
       render json: { errors: @contact.errors.full_messages }, status: :unprocessable_entity
     end
@@ -20,7 +19,7 @@ class Api::V1::ContactsController < Api::V1::BaseController
 
   def update
     if @contact.update(contact_params.except(:contractor_id))
-      render json: @contact
+      render :show
     else
       render json: { errors: @contact.errors.full_messages }, status: :unprocessable_entity
     end

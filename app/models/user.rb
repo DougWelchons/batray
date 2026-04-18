@@ -9,11 +9,12 @@ class User < ApplicationRecord
   belongs_to :company
   has_many :bid_submissions, dependent: :destroy
 
-  validates :name, presence: true
+  validates :first_name, presence: true
+  validates :last_name, presence: true
   validates :role, presence: true
   validates :company_id, presence: true
 
   def full_name
-    name
+    "#{first_name} #{last_name}"
   end
 end
