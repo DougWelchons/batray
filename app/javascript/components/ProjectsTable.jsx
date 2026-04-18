@@ -122,7 +122,7 @@ export default function ProjectsTable() {
                     <span className="tag">Rebid</span>
                   )}
                 </td>
-                <td>{project.location || "—"}</td>
+                <td>{project.city || "—"}</td>
                 <td className={projectDueDateClass(project)}>{formatDate(project.earliest_bid_due_at) || "—"}</td>
                 <td>
                   {(() => {

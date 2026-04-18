@@ -4,7 +4,7 @@ import FormField from './forms/FormField';
 import SearchableDropDown from './forms/searchableDropDown';
 import { fetchContacts } from '../spa/store/slices/contactsSlice';
 
-export default function ProjectBidForm({ bid = {}, contractors = [], onChange = () => {} }) {
+export default function ProjectBidForm({ bid = {}, contractors = [], onChange = () => {}, removeBid = () => {} }) {
   const dispatch = useDispatch();
   const allContacts = useSelector((state) => state.contacts.items);
 
@@ -28,6 +28,10 @@ export default function ProjectBidForm({ bid = {}, contractors = [], onChange = 
   const handleContactChange = (contact) => {
     onChange({ target: { name: "contact_id", value: contact.id } });
   };
+
+  const removeThisBid = () => {
+    removeBid(bid.tempId)
+  }
 
   return (<>
     <tr>
@@ -60,11 +64,13 @@ export default function ProjectBidForm({ bid = {}, contractors = [], onChange = 
       <td>
         <FormField label="Bid Due" name="bid_due_at" value={bid.bid_due_at} type="date" onChange={onChange} showLabel={false} />
       </td>
-      {/* <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td> */}
+      {/* <td></td> */}
+      {/* <td></td> */}
+      {/* <td></td> */}
+      {/* <td></td> */}
+      <td>
+        {!bid.id && <button className="btn btn--danger" onClick={removeThisBid}>X</button>}
+      </td>
     </tr>
   </>)
 }

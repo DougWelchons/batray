@@ -57,6 +57,10 @@ export default function ProjectsForm() {
     dispatch(project?.id ? updateProject({ id: project.id, projectData: formData }) : createProject(formData));
   }
 
+  const removeBid = (id) => {
+    setBids(bids.filter((bid) => bid.tempId !== id && bid.id !== id));
+  }
+
   useHeader(project?.id ? `Edit ${project.name}` : "Add Project");
 
   const selectedClassifications = classifications.filter(c => (formData.classification_ids || []).includes(c.id));
@@ -98,11 +102,11 @@ export default function ProjectsForm() {
               <th>General Contractor</th>
               <th>Contact</th>
               <th>Bid Due Date</th>
-              {/* <th>Submitted Value</th>
-              <th>FA</th>
-              <th>LV</th>
-              <th>Status</th>
-              <th></th> */}
+              {/* <th>Submitted Value</th> */}
+              {/* <th>FA</th> */}
+              {/* <th>LV</th> */}
+              {/* <th>Status</th> */}
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -119,6 +123,7 @@ export default function ProjectsForm() {
                     return newBids;
                   });
                 }}
+                removeBid={removeBid}
               />
             )) :
             <tr><td colSpan="8">No bids added yet</td></tr>}
