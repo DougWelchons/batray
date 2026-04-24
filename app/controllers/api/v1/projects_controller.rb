@@ -2,7 +2,15 @@ class Api::V1::ProjectsController < Api::V1::BaseController
   before_action :set_project, only: [ :show, :update, :destroy ]
 
   def index
-    @projects = @company.projects.kept.includes(:bid_submissions, :classifications)
+    @projects = @company.projects.kept.includes(
+      :classifications,
+      bid_submissions: [
+        :project,
+        :contractor,
+        :user,
+        :contact
+    ]
+  )
   end
 
   def show
@@ -34,7 +42,15 @@ class Api::V1::ProjectsController < Api::V1::BaseController
   private
 
   def set_project
-    @project = @company.projects.includes(:bid_submissions, :classifications).find(params[:id])
+    @project = @company.projects.includes(
+      :classifications,
+      bid_submissions: [
+        :project,
+        :contractor,
+        :user,
+        :contact
+      ]
+    ).find(params[:id])
   end
 
   def project_params

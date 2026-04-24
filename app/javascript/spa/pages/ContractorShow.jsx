@@ -98,17 +98,11 @@ export default function ContractorsTable() {
               <dd>{contractor.phone}</dd>
             </div>
           )}
-          {contractor.email && (
-            <div className="meta-item">
-              <dt>Email</dt>
-              <dd>{contractor.email}</dd>
-            </div>
-          )}
-          {(contractor.address || contractor.city || contractor.state || contractor.zip_code) && (
+          {(contractor.street || contractor.city || contractor.state || contractor.zip_code) && (
             <div className="meta-item">
               <dt>Address</dt>
               <dd>
-                {contractor.address && <span>{contractor.address}<br /></span>}
+                {contractor.street && <span>{contractor.street}<br /></span>}
                 {(contractor.city || contractor.state || contractor.zip_code) && (
                   <span>
                     {[contractor.city, contractor.state].filter(Boolean).join(', ')}

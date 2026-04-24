@@ -73,6 +73,10 @@ class BidSubmission < ApplicationRecord
     user&.full_name
   end
 
+  def contact_name
+    contact&.full_name
+  end
+
   private
 
   def award_decision_after_bid_submitted

@@ -33,6 +33,7 @@ export default function BidSubmissionsTable({
         <tr>
           {displayProject && <th>Project</th>}
           {displayContractor && <th>Contractor</th>}
+          <th>Contact</th>
           <th>Status</th>
           <th>Bid Date</th>
           <th>Submitted Value</th>
@@ -48,6 +49,7 @@ export default function BidSubmissionsTable({
               <Link to={`/projects/${bid.project_id}`} className="link">{bid.project_name}</Link>
             </td>}
             {displayContractor && <td>{bid.contractor_name}</td>}
+            <td>{bid.contact_name}</td>
             <td><span className={STATUS_BADGE_CLASSES[bid.status]}>{bid.status}</span></td>
             <td>{new Date(bid.bid_due_at).toLocaleDateString()}</td>
             <td className="text-right">{formatCurrency(bid.submitted_value)}</td>
