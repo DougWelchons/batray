@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createProject, fetchProject, updateProject } from "../../store/slices/projectsSlice";
 import { useHeader } from "../../HeaderContext";
-import { FormField, MultiSelectDropDown } from "../../../components/ui";
+import { FormField, MultiSelectDropDown, Card, Button, Table } from "../../../components/ui";
 import { useParams } from "react-router-dom";
 import ProjectBidForm from "./ProjectBidForm";
 import { fetchContractors } from "../../store/slices/contractorsSlice";
@@ -65,7 +65,7 @@ export default function ProjectsForm() {
   const selectedClassifications = classifications.filter(c => (formData.classification_ids || []).includes(c.id));
 
   return (
-    <div className="card">
+    <Card>
       <div className="form__row form__row--cols-1">
         <FormField label="Name" name="name" value={formData.name} onChange={handleChange} />
         <FormField label="Street" name="street" value={formData.street} onChange={handleChange} />
@@ -90,25 +90,19 @@ export default function ProjectsForm() {
       <div className="form__section">
         <div className="form__section-header">
           <h2 className="form__section-title">General Contractors</h2>
-          <button type="button" className="btn btn--secondary btn--sm" onClick={addBid}>
-            + Add GC
-          </button>
+          <Button type="button" variant="secondary" size="sm" onClick={addBid}>+ Add GC</Button>
         </div>
 
-        <table className="table">
-          <thead>
-            <tr>
-              <th>General Contractor</th>
-              <th>Contact</th>
-              <th>Bid Due Date</th>
-              {/* <th>Submitted Value</th> */}
-              {/* <th>FA</th> */}
-              {/* <th>LV</th> */}
-              {/* <th>Status</th> */}
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
+        <Table>
+          <Table.Head>
+            <Table.Row>
+              <Table.Th>General Contractor</Table.Th>
+              <Table.Th>Contact</Table.Th>
+              <Table.Th>Bid Due Date</Table.Th>
+              <Table.Th />
+            </Table.Row>
+          </Table.Head>
+          <Table.Body>
             {bids.length > 0 ? bids.map((bid, index) => (
               <ProjectBidForm
                 key={bid.id || bid.tempId || index}
@@ -125,10 +119,10 @@ export default function ProjectsForm() {
                 removeBid={removeBid}
               />
             )) :
-            <tr><td colSpan="8">No bids added yet</td></tr>}
-          </tbody>
-        </table>
+            <Table.Row><Table.Td>No bids added yet</Table.Td></Table.Row>}
+          </Table.Body>
+        </Table>
       </div>
-    </div>
+    </Card>
   )
 }

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { createContact, updateContact, deleteContact } from "../../store/slices/contactsSlice";
-import { FormField } from "../../../components/ui";
+import { FormField, Button } from "../../../components/ui";
 
 export default function ContactsTableRow({ contact = {}, contractorId, onChange = () => {}, autoSave = true, handleCancel = () => {}, handleSave = () => {} }) {
   const dispatch = useDispatch();
@@ -79,8 +79,8 @@ export default function ContactsTableRow({ contact = {}, contractorId, onChange 
         <td>{contact.phone}</td>
         <td>{contact.role}</td>
         <td className="table__actions">
-          <button className="btn btn--ghost btn--sm" onClick={() => setIsEditing(true)}>Edit</button>
-          <button className="btn btn--danger btn--sm" onClick={handleDelete}>Remove</button>
+          <Button variant="ghost" size="sm" onClick={() => setIsEditing(true)}>Edit</Button>
+          <Button variant="danger" size="sm" onClick={handleDelete}>Remove</Button>
         </td>
       </tr> : <tr>
       <td><FormField
@@ -113,15 +113,13 @@ export default function ContactsTableRow({ contact = {}, contractorId, onChange 
       /></td>
       <td className="table__actions">
         {saveError && <span className="form__error">{saveError}</span>}
-        <button className="btn btn--primary btn--sm" onClick={saveContact} disabled={saving}>
+        <Button size="sm" onClick={saveContact} disabled={saving}>
           {saving ? 'Saving...' : 'Save'}
-        </button>
-        <button className="btn btn--ghost btn--sm" disabled={saving} onClick={() => {
-          if (!contact.id) {
-            handleCancel(contact.tempID);
-          }
+        </Button>
+        <Button variant="ghost" size="sm" disabled={saving} onClick={() => {
+          if (!contact.id) handleCancel(contact.tempID);
           setIsEditing(false);
-        }}>Cancel</button>
+        }}>Cancel</Button>
       </td>
     </tr>}
   </>)

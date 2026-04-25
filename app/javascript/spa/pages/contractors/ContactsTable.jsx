@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import ContactsTableRow from "./ContactsTableRow";
 import { fetchContacts } from "../../store/slices/contactsSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { Table, Button } from "../../../components/ui";
 
 export default function ContactsTable({ contractorId }) {
   const dispatch = useDispatch();
@@ -33,19 +34,19 @@ export default function ContactsTable({ contractorId }) {
   }
 
   return (
-    <table className="table">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Email</th>
-          <th>Phone</th>
-          <th>Role</th>
-          <th>
-            <button className="btn btn--ghost btn--sm" onClick={handleAddContact}>+ Add Contact</button>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
+    <Table>
+      <Table.Head>
+        <Table.Row>
+          <Table.Th>Name</Table.Th>
+          <Table.Th>Email</Table.Th>
+          <Table.Th>Phone</Table.Th>
+          <Table.Th>Role</Table.Th>
+          <Table.Th>
+            <Button variant="ghost" size="sm" onClick={handleAddContact}>+ Add Contact</Button>
+          </Table.Th>
+        </Table.Row>
+      </Table.Head>
+      <Table.Body>
         {contacts.map((contact, index) => (
           <ContactsTableRow
             key={contact.id || contact.tempID || index}
@@ -55,7 +56,7 @@ export default function ContactsTable({ contractorId }) {
             handleSave={handleSave}
           />
         ))}
-      </tbody>
-    </table>
+      </Table.Body>
+    </Table>
   )
 }

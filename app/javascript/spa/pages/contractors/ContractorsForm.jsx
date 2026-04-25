@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from "react-router-dom";
-import { FormField } from '../../../components/ui';
+import { FormField, Card, Button } from '../../../components/ui';
 import { useHeader } from '../../HeaderContext';
 import { createContractor, fetchContractor, updateContractor } from '../../store/slices/contractorsSlice';
 import { useDispatch, useSelector } from 'react-redux';
@@ -71,7 +71,7 @@ export default function ContractorsForm() {
   };
 
   return (
-    <div className="card">
+    <Card>
       <div className="form__row form__row--cols-2">
         <FormField
           label="Contractor Name"
@@ -115,8 +115,10 @@ export default function ContractorsForm() {
           onChange={handleChange}
         />
       </div>
-      <button type="submit" className="btn btn--primary" onClick={handleSubmit}>{contractor?.id ? "Update Contractor" : "Create Contractor"}</button>
-      <button className="btn btn--secondary" onClick={handleCancel}>Cancel</button>
-    </div>
+      <div className="form__actions">
+        <Button onClick={handleSubmit}>{contractor?.id ? "Update Contractor" : "Create Contractor"}</Button>
+        <Button variant="secondary" onClick={handleCancel}>Cancel</Button>
+      </div>
+    </Card>
   )
 }

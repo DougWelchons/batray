@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { Card, Table, Tag, Button, EmptyState } from "../../../components/ui";
 
 export default function ProjectsTable() {
   const projects = useSelector(state => state.projects.items);
@@ -40,7 +41,7 @@ export default function ProjectsTable() {
   const sortedProjects = useMemo(() => {
     if (!projects) return [];
 
-    const sorted = [...projects].sort((a, b) => {
+    return [...projects].sort((a, b) => {
       let aVal, bVal;
 
       switch (sortColumn) {
@@ -53,7 +54,6 @@ export default function ProjectsTable() {
           bVal = b.location?.toLowerCase() || "";
           break;
         case "bid_due_at":
-          // Projects with no bid due date should appear at the top (largest sort value when desc)
           aVal = a.earliest_bid_due_at ? new Date(a.earliest_bid_due_at).getTime() : Infinity;
           bVal = b.earliest_bid_due_at ? new Date(b.earliest_bid_due_at).getTime() : Infinity;
           break;
@@ -77,11 +77,9 @@ export default function ProjectsTable() {
       if (aVal > bVal) return sortDirection === "asc" ? 1 : -1;
       return 0;
     });
-
-    return sorted;
   }, [projects, sortColumn, sortDirection]);
 
-  const SortableHeader = ({ column, label, className = "" }) => {
+  const SortableHeader = ({ column, label, right = false }) => {
     const isActive = sortColumn === column;
     const icon = isActive ? (sortDirection === "asc" ? " ↑" : " ↓") : "";
 
@@ -89,7 +87,7 @@ export default function ProjectsTable() {
       <th>
         <button
           onClick={() => handleSort(column)}
-          className={`sort-link ${isActive ? "sort-link--active" : ""} ${className}`}
+          className={`sort-link ${isActive ? "sort-link--active" : ""} ${right ? "sort-link--right" : ""}`}
         >
           {label}
           <span className="sort-indicator">{icon}</span>
@@ -99,56 +97,57 @@ export default function ProjectsTable() {
   }
 
   return (
-    <div className="card">
-      {projects?.length > 0 ?
-        <table className="table">
-          <thead>
-            <tr>
+    <Card noPadding>
+      {projects?.length > 0 ? (
+        <Table>
+          <Table.Head>
+            <Table.Row>
               <SortableHeader column="name" label="Project Name" />
               <SortableHeader column="location" label="Location" />
               <SortableHeader column="bid_due_at" label="Bid Due" />
               <SortableHeader column="project_type" label="Type" />
               <SortableHeader column="estimated_start_date" label="Start Date" />
-              <SortableHeader column="bid_count" label="Bids" className="sort-link--right" />
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
+              <SortableHeader column="bid_count" label="Bids" right />
+              <th />
+            </Table.Row>
+          </Table.Head>
+          <Table.Body>
             {sortedProjects.map(project => (
-              <tr key={project.id} className={projectStatusClass(project)}>
-                <td>
+              <Table.Row key={project.id} className={projectStatusClass(project)}>
+                <Table.Td>
                   <Link to={`/projects/${project.id}`} className="link">{project.name}</Link>
-                  {project.rebid_of_id && (
-                    <span className="tag">Rebid</span>
-                  )}
-                </td>
-                <td>{project.city || "—"}</td>
-                <td className={projectDueDateClass(project)}>{formatDate(project.earliest_bid_due_at) || "—"}</td>
-                <td>
+                  {project.rebid_of_id && <Tag>Rebid</Tag>}
+                </Table.Td>
+                <Table.Td>{project.city || "—"}</Table.Td>
+                <Table.Td className={projectDueDateClass(project)}>
+                  {formatDate(project.earliest_bid_due_at) || "—"}
+                </Table.Td>
+                <Table.Td>
                   {(() => {
                     const ids = project.classification_ids || [];
                     if (ids.length === 0) return "—";
                     if (ids.length === 1) {
                       const name = classifications.find(c => c.id === ids[0])?.name;
-                      return <span className="tag">{name || "—"}</span>;
+                      return <Tag>{name || "—"}</Tag>;
                     }
-                    return <span className="tag">{ids.length} types</span>;
+                    return <Tag>{ids.length} types</Tag>;
                   })()}
-                </td>
-                <td>{formatDate(project.estimated_start_date) || "—"}</td>
-                <td className="text-right">{project.bid_count}</td>
-                <td className="table__actions">
-                  <Link to={`/projects/${project.id}/edit`} className="btn btn--ghost btn--sm">Edit</Link>
-                </td>
-              </tr>
+                </Table.Td>
+                <Table.Td>{formatDate(project.estimated_start_date) || "—"}</Table.Td>
+                <Table.Td right>{project.bid_count}</Table.Td>
+                <Table.Td actions>
+                  <Button as="link" to={`/projects/${project.id}/edit`} variant="ghost" size="sm">Edit</Button>
+                </Table.Td>
+              </Table.Row>
             ))}
-          </tbody>
-        </table> :
-        <div className="empty-state">
-          <p>No projects yet.</p>
-          <Link to="/projects/new" className="btn btn--primary">Create your first project</Link>
-        </div>
-      }
-    </div>
+          </Table.Body>
+        </Table>
+      ) : (
+        <EmptyState
+          message="No projects yet."
+          action={<Button as="link" to="/projects/new">Create your first project</Button>}
+        />
+      )}
+    </Card>
   );
 }

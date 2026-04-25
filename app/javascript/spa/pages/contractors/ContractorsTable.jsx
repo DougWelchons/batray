@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchContractors } from "../../store/slices/contractorsSlice";
 import { Link } from "react-router-dom";
+import { Card, Table, Button, EmptyState } from "../../../components/ui";
 
 export default function ContractorsTable() {
   const dispatch = useDispatch();
@@ -12,35 +13,38 @@ export default function ContractorsTable() {
   }, [dispatch]);
 
   return (
-    <div className="card">
+    <Card noPadding>
       {contractors.length > 0 ? (
-        <table className="table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Phone</th>
-              <th className="text-right">Bids</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
+        <Table>
+          <Table.Head>
+            <Table.Row>
+              <Table.Th>Name</Table.Th>
+              <Table.Th>Phone</Table.Th>
+              <Table.Th right>Bids</Table.Th>
+              <Table.Th />
+            </Table.Row>
+          </Table.Head>
+          <Table.Body>
             {contractors.map(contractor => (
-              <tr key={contractor.id}>
-                <td><Link to={`/contractors/${contractor.id}`} className="link">{contractor.name}</Link></td>
-                <td>{contractor.phone || "—"}</td>
-                <td className="text-right">{contractor.total_bid_submissions}</td>
-                <td className="table__actions">
-                  <Link to={`/contractors/${contractor.id}/edit`} className="btn btn--ghost btn--sm">Edit</Link>
-                </td>
-              </tr>
+              <Table.Row key={contractor.id}>
+                <Table.Td>
+                  <Link to={`/contractors/${contractor.id}`} className="link">{contractor.name}</Link>
+                </Table.Td>
+                <Table.Td>{contractor.phone || "—"}</Table.Td>
+                <Table.Td right>{contractor.total_bid_submissions}</Table.Td>
+                <Table.Td actions>
+                  <Button as="link" to={`/contractors/${contractor.id}/edit`} variant="ghost" size="sm">Edit</Button>
+                </Table.Td>
+              </Table.Row>
             ))}
-          </tbody>
-        </table>):(
-        <div className="empty-state">
-          <p>No contractors yet.</p>
-          <Link to="/contractors/new" className="btn btn--primary">Add your first contractor</Link>
-        </div>
+          </Table.Body>
+        </Table>
+      ) : (
+        <EmptyState
+          message="No contractors yet."
+          action={<Button as="link" to="/contractors/new">Add your first contractor</Button>}
+        />
       )}
-    </div>
-  )
+    </Card>
+  );
 }

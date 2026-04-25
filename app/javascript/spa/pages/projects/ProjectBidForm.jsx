@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { FormField, SearchableDropDown } from '../../../components/ui';
+import { FormField, SearchableDropDown, Button, Table } from '../../../components/ui';
 import { fetchContacts } from '../../store/slices/contactsSlice';
 
 export default function ProjectBidForm({ bid = {}, contractors = [], onChange = () => {}, removeBid = () => {} }) {
@@ -32,9 +32,9 @@ export default function ProjectBidForm({ bid = {}, contractors = [], onChange = 
     removeBid(bid.tempId)
   }
 
-  return (<>
-    <tr>
-      <td>
+  return (
+    <Table.Row>
+      <Table.Td>
         <SearchableDropDown
           label="Contractor"
           items={contractors}
@@ -46,8 +46,8 @@ export default function ProjectBidForm({ bid = {}, contractors = [], onChange = 
           disabled={!!bid.id}
           showLabel={false}
         />
-      </td>
-      <td>
+      </Table.Td>
+      <Table.Td>
         <SearchableDropDown
           label="Contact"
           items={contractorContacts}
@@ -59,17 +59,13 @@ export default function ProjectBidForm({ bid = {}, contractors = [], onChange = 
           disabled={!selectedContractor}
           showLabel={false}
         />
-      </td>
-      <td>
+      </Table.Td>
+      <Table.Td>
         <FormField label="Bid Due" name="bid_due_at" value={bid.bid_due_at} type="date" onChange={onChange} showLabel={false} />
-      </td>
-      {/* <td></td> */}
-      {/* <td></td> */}
-      {/* <td></td> */}
-      {/* <td></td> */}
-      <td>
-        {!bid.id && <button className="btn btn--danger" onClick={removeThisBid}>X</button>}
-      </td>
-    </tr>
-  </>)
+      </Table.Td>
+      <Table.Td actions>
+        {!bid.id && <Button variant="danger" size="sm" onClick={removeThisBid}>×</Button>}
+      </Table.Td>
+    </Table.Row>
+  )
 }
