@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { createContact, updateContact, deleteContact } from "../spa/store/slices/contactsSlice";
-import FormField from "./forms/FormField";
+import { createContact, updateContact, deleteContact } from "../../store/slices/contactsSlice";
+import { FormField } from "../../../components/ui";
 
 export default function ContactsTableRow({ contact = {}, contractorId, onChange = () => {}, autoSave = true, handleCancel = () => {}, handleSave = () => {} }) {
   const dispatch = useDispatch();
@@ -19,7 +19,6 @@ export default function ContactsTableRow({ contact = {}, contractorId, onChange 
 
   const handlePhoneChange = (e) => {
     const { name, value } = e.target;
-    // Allow only digits and limit to 10, format progressively
     const digits = value.replace(/[^0-9]/g, '').slice(0, 10);
 
     let formattedValue = '';
@@ -125,4 +124,5 @@ export default function ContactsTableRow({ contact = {}, contractorId, onChange 
         }}>Cancel</button>
       </td>
     </tr>}
-  </>)}
+  </>)
+}

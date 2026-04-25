@@ -1,8 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import FormField from './forms/FormField';
-import SearchableDropDown from './forms/searchableDropDown';
-import { fetchContacts } from '../spa/store/slices/contactsSlice';
+import { FormField, SearchableDropDown } from '../../../components/ui';
+import { fetchContacts } from '../../store/slices/contactsSlice';
 
 export default function ProjectBidForm({ bid = {}, contractors = [], onChange = () => {}, removeBid = () => {} }) {
   const dispatch = useDispatch();

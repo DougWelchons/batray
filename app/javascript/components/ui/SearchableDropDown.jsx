@@ -1,5 +1,28 @@
 import React, { useState, useRef, useEffect } from "react";
 
+/**
+ * SearchableDropDown — single-select dropdown with live search.
+ *
+ * items:             array of objects (or primitives)
+ * searchableColumns: array of string keys to search/display (e.g. ["name", "email"])
+ * displayFn:         optional (item) => string — overrides searchableColumns for display
+ * value:             currently selected item object (or null)
+ * onChange:          (item) => void — called with the full selected item
+ * label:             string
+ * placeholder:       string (default "Select...")
+ * required:          bool
+ * disabled:          bool
+ * showLabel:         bool (default true)
+ *
+ * Example:
+ *   <SearchableDropDown
+ *     label="Contractor"
+ *     items={contractors}
+ *     searchableColumns={["name"]}
+ *     value={selectedContractor}
+ *     onChange={c => setSelectedContractor(c)}
+ *   />
+ */
 export default function SearchableDropDown({
   items = [],
   searchableColumns = [],
@@ -10,7 +33,7 @@ export default function SearchableDropDown({
   displayFn,
   required = false,
   disabled = false,
-  showLabel = true
+  showLabel = true,
 }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -22,10 +45,7 @@ export default function SearchableDropDown({
   const getDisplayLabel = (item) => {
     if (!item) return "";
     if (displayFn) return displayFn(item);
-    return searchableColumns
-      .map((col) => item[col])
-      .filter(Boolean)
-      .join(" ");
+    return searchableColumns.map((col) => item[col]).filter(Boolean).join(" ");
   };
 
   const filtered =
@@ -38,7 +58,6 @@ export default function SearchableDropDown({
           })
         );
 
-  // Close on outside click
   useEffect(() => {
     const handler = (e) => {
       if (containerRef.current && !containerRef.current.contains(e.target)) {
@@ -50,7 +69,6 @@ export default function SearchableDropDown({
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  // Focus search input when panel opens
   useEffect(() => {
     if (open) {
       searchRef.current?.focus();
@@ -58,7 +76,6 @@ export default function SearchableDropDown({
     }
   }, [open]);
 
-  // Scroll highlighted item into view
   useEffect(() => {
     if (!listRef.current) return;
     const item = listRef.current.children[highlighted];
@@ -115,13 +132,7 @@ export default function SearchableDropDown({
           aria-expanded={open}
           disabled={disabled}
         >
-          <span
-            className={
-              selectedLabel
-                ? "searchable-dropdown__selected-label"
-                : "searchable-dropdown__placeholder"
-            }
-          >
+          <span className={selectedLabel ? "searchable-dropdown__selected-label" : "searchable-dropdown__placeholder"}>
             {selectedLabel || placeholder}
           </span>
           <svg
@@ -134,11 +145,7 @@ export default function SearchableDropDown({
             height="16"
             aria-hidden="true"
           >
-            <path
-              fillRule="evenodd"
-              d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-              clipRule="evenodd"
-            />
+            <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
           </svg>
         </button>
 
@@ -151,15 +158,11 @@ export default function SearchableDropDown({
                 type="text"
                 placeholder="Search..."
                 value={query}
-                onChange={(e) => {
-                  setQuery(e.target.value);
-                  setHighlighted(0);
-                }}
+                onChange={(e) => { setQuery(e.target.value); setHighlighted(0); }}
                 onKeyDown={handleSearchKeyDown}
                 autoComplete="off"
               />
             </div>
-
             <ul className="searchable-dropdown__list" ref={listRef} role="listbox">
               {filtered.length === 0 ? (
                 <li className="searchable-dropdown__empty">No results</li>
@@ -171,14 +174,9 @@ export default function SearchableDropDown({
                       "searchable-dropdown__item",
                       i === highlighted ? "searchable-dropdown__item--highlighted" : "",
                       value === item ? "searchable-dropdown__item--selected" : "",
-                    ]
-                      .filter(Boolean)
-                      .join(" ")}
+                    ].filter(Boolean).join(" ")}
                     onMouseEnter={() => setHighlighted(i)}
-                    onMouseDown={(e) => {
-                      e.preventDefault();
-                      handleSelect(item);
-                    }}
+                    onMouseDown={(e) => { e.preventDefault(); handleSelect(item); }}
                     role="option"
                     aria-selected={value === item}
                   >

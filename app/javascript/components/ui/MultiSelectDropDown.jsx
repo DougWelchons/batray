@@ -1,5 +1,28 @@
 import React, { useState, useRef, useEffect } from "react";
 
+/**
+ * MultiSelectDropDown — multi-select dropdown with live search and chip display.
+ *
+ * items:             array of objects (or primitives)
+ * searchableColumns: array of string keys to search/display (e.g. ["name"])
+ * displayFn:         optional (item) => string — overrides searchableColumns for display
+ * value:             array of currently selected items (default [])
+ * onChange:          (items[]) => void — called with full updated selection array
+ * label:             string
+ * placeholder:       string (default "Select...")
+ * required:          bool
+ * disabled:          bool
+ * showLabel:         bool (default true)
+ *
+ * Example:
+ *   <MultiSelectDropDown
+ *     label="Classifications"
+ *     items={classifications}
+ *     searchableColumns={["name"]}
+ *     value={selectedClassifications}
+ *     onChange={vals => setSelectedClassifications(vals)}
+ *   />
+ */
 export default function MultiSelectDropDown({
   items = [],
   onChange,
@@ -107,8 +130,7 @@ export default function MultiSelectDropDown({
       <div className="searchable-dropdown">
         <button
           type="button"
-          className="searchable-dropdown__trigger"
-          style={{ height: "auto", minHeight: "var(--input-height, 36px)", flexWrap: "wrap", gap: "4px", alignItems: "center" }}
+          className="searchable-dropdown__trigger multiselect-trigger"
           onClick={() => !disabled && setOpen((o) => !o)}
           onKeyDown={disabled ? undefined : handleTriggerKeyDown}
           aria-haspopup="listbox"
@@ -118,29 +140,15 @@ export default function MultiSelectDropDown({
           {selected.length === 0 ? (
             <span className="searchable-dropdown__placeholder">{placeholder}</span>
           ) : (
-            <span style={{ display: "flex", flexWrap: "wrap", gap: "4px", flex: 1 }}>
+            <span className="multiselect-chips">
               {selected.map((item) => (
-                <span
-                  key={getId(item)}
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: "4px",
-                    padding: "2px 6px",
-                    borderRadius: "var(--radius-sm, 4px)",
-                    background: "var(--color-accent-muted, rgba(99,102,241,0.12))",
-                    color: "var(--color-accent)",
-                    fontSize: "var(--text-xs, 0.75rem)",
-                    fontWeight: 500,
-                    lineHeight: 1.4,
-                  }}
-                >
+                <span key={getId(item)} className="multiselect-chip">
                   {getLabel(item)}
                   <span
                     role="button"
                     aria-label={`Remove ${getLabel(item)}`}
+                    className="multiselect-chip__remove"
                     onMouseDown={(e) => remove(item, e)}
-                    style={{ cursor: "pointer", lineHeight: 1, opacity: 0.7 }}
                   >
                     ×
                   </span>
@@ -158,11 +166,7 @@ export default function MultiSelectDropDown({
             height="16"
             aria-hidden="true"
           >
-            <path
-              fillRule="evenodd"
-              d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-              clipRule="evenodd"
-            />
+            <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
           </svg>
         </button>
 
@@ -175,15 +179,11 @@ export default function MultiSelectDropDown({
                 type="text"
                 placeholder="Search..."
                 value={query}
-                onChange={(e) => {
-                  setQuery(e.target.value);
-                  setHighlighted(0);
-                }}
+                onChange={(e) => { setQuery(e.target.value); setHighlighted(0); }}
                 onKeyDown={handleSearchKeyDown}
                 autoComplete="off"
               />
             </div>
-
             <ul className="searchable-dropdown__list" ref={listRef} role="listbox">
               {filtered.length === 0 ? (
                 <li className="searchable-dropdown__empty">No results</li>
@@ -197,15 +197,9 @@ export default function MultiSelectDropDown({
                         "searchable-dropdown__item",
                         i === highlighted ? "searchable-dropdown__item--highlighted" : "",
                         sel ? "searchable-dropdown__item--selected" : "",
-                      ]
-                        .filter(Boolean)
-                        .join(" ")}
-                      style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}
+                      ].filter(Boolean).join(" ")}
                       onMouseEnter={() => setHighlighted(i)}
-                      onMouseDown={(e) => {
-                        e.preventDefault();
-                        toggle(item);
-                      }}
+                      onMouseDown={(e) => { e.preventDefault(); toggle(item); }}
                       role="option"
                       aria-selected={sel}
                     >

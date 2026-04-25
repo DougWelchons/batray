@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { dismissFlash } from '../spa/store/slices/flashSlice';
+import { dismissFlash } from '../../spa/store/slices/flashSlice';
 
 function FlashMessage({ id, type, message }) {
   const dispatch = useDispatch();

@@ -220,12 +220,25 @@ ul, ol { list-style: none; }
   margin-bottom: var(--space-5);
 }
 
+.card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
+}
+
+.card__header .card__title { margin-bottom: 0; }
+
+.card__actions { display: flex; align-items: center; gap: var(--space-2); flex-shrink: 0; }
+
 .card__title {
   font-size: 20px;
   font-weight: 500;
   color: var(--color-text-primary);
   margin-bottom: var(--space-4);
 }
+
+.card--no-padding { padding: 0; overflow: hidden; }
 
 /* ===========================================================
    6. BUTTONS
@@ -571,6 +584,12 @@ ul, ol { list-style: none; }
   letter-spacing: -0.02em;
 }
 
+.stat-card__sub {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  margin-top: var(--space-1);
+}
+
 .charts-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -613,6 +632,7 @@ ul, ol { list-style: none; }
 .tag {
   display: inline-flex;
   align-items: center;
+  gap: var(--space-1);
   padding: 2px 8px;
   background-color: var(--color-accent-subtle);
   color: var(--color-accent);
@@ -621,6 +641,20 @@ ul, ol { list-style: none; }
   border-radius: 9999px;
   margin-left: var(--space-2);
 }
+
+.tag__remove {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--color-accent);
+  font-size: 14px;
+  line-height: 1;
+  opacity: 0.6;
+  font-family: inherit;
+}
+
+.tag__remove:hover { opacity: 1; }
 
 .empty-state {
   text-align: center;
@@ -754,7 +788,47 @@ ul, ol { list-style: none; }
 }
 
 /* ===========================================================
-   15. RESPONSIVE
+   15. MULTI-SELECT CHIPS
+   =========================================================== */
+.multiselect-trigger {
+  height: auto;
+  min-height: 34px;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.multiselect-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  flex: 1;
+}
+
+.multiselect-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 2px var(--space-2);
+  background-color: var(--color-accent-subtle);
+  color: var(--color-accent);
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: var(--border-radius);
+  line-height: 1.4;
+}
+
+.multiselect-chip__remove {
+  cursor: pointer;
+  opacity: 0.6;
+  line-height: 1;
+  font-size: 14px;
+}
+
+.multiselect-chip__remove:hover { opacity: 1; }
+
+/* ===========================================================
+   17. RESPONSIVE
    =========================================================== */
 @media (max-width: 1024px) {
   .stats-grid  { grid-template-columns: repeat(2, 1fr); }

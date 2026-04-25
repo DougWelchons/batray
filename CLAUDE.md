@@ -425,6 +425,33 @@ The application succeeds if:
 
 ---
 
+# Component Library Rule
+
+All React UI must use the components in `app/javascript/components/ui/`.
+
+## Import
+
+```js
+import { Button, Card, Table, StatusBadge, FormField, EmptyState, StatCard, PageHeader } from "../ui";
+```
+
+## Hard Requirements
+
+1. Never write raw `<button className="btn btn--primary">` — use `<Button>`.
+2. Never write raw `<span className="status-badge status-awarded">` — use `<StatusBadge status="awarded">`.
+3. Never write raw `<div className="card">` — use `<Card>`.
+4. Never write a `<table className="table">` directly — use `<Table>` with sub-components.
+5. Never write raw `<div className="empty-state">` — use `<EmptyState>`.
+6. Never write raw `<div className="stat-card">` — use `<StatCard>`.
+7. Never write raw `<div className="form__field">` — use `<FormField>`.
+8. Never write raw `<header className="top-header">` — use `<PageHeader>`.
+9. Never write raw `<div className="meta-list">` / `<div className="meta-item">` — use `<MetaList>` / `<MetaItem>`.
+10. Never write raw `<span className="tag">` — use `<Tag>`.
+
+See `COMPONENTS.md` for full prop reference and usage examples.
+
+---
+
 # Design Enforcement Rule
 
 All UI, layout, styling, and component decisions MUST strictly follow the

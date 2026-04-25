@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from "react-router-dom";
-import FormField from './forms/FormField';
-import { useHeader } from '../spa/HeaderContext';
-import { createContractor, fetchContractor, updateContractor } from '../spa/store/slices/contractorsSlice';
+import { FormField } from '../../../components/ui';
+import { useHeader } from '../../HeaderContext';
+import { createContractor, fetchContractor, updateContractor } from '../../store/slices/contractorsSlice';
 import { useDispatch, useSelector } from 'react-redux';
 
 export default function ContractorsForm() {
@@ -28,6 +28,7 @@ export default function ContractorsForm() {
   }, [contractor?.id]);
 
   useHeader(contractor?.id ? `Edit ${contractor.name}` : "Add Contractor");
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prevData => ({ ...prevData, [name]: value }));
@@ -35,7 +36,6 @@ export default function ContractorsForm() {
 
   const handlePhoneChange = (e) => {
     const { name, value } = e.target;
-    // Allow only digits and limit to 10, format progressively
     const digits = value.replace(/[^0-9]/g, '').slice(0, 10);
 
     let formattedValue = '';

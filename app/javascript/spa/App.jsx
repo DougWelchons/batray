@@ -5,16 +5,16 @@ import store from './store';
 import { fetchCurrentUser } from './store/slices/currentUserSlice';
 import { HeaderProvider, useHeaderProps } from './HeaderContext';
 import Dashboard from './pages/Dashboard';
-import Projects from './pages/Projects';
-import Contractors from './pages/Contractors';
-import ContractorShow from './pages/ContractorShow';
-import BidSubmissions from './pages/BidSubmissions';
-import Sidebar from '../components/Sidebar';
-import ContractorsForm from '../components/ContractorsForm';
-import Header from '../components/Header';
-import Flash from '../components/Flash';
-import ProjectShow from './pages/ProjectShow';
-import ProjectsForm from './pages/ProjectsForm';
+import Projects from './pages/projects/Projects';
+import ProjectShow from './pages/projects/ProjectShow';
+import ProjectsForm from './pages/projects/ProjectsForm';
+import Contractors from './pages/contractors/Contractors';
+import ContractorShow from './pages/contractors/ContractorShow';
+import ContractorsForm from './pages/contractors/ContractorsForm';
+import BidSubmissions from './pages/bids/BidSubmissions';
+import Sidebar from '../components/layout/Sidebar';
+import Flash from '../components/layout/Flash';
+import { PageHeader } from '../components/ui';
 
 function AppContent() {
   const dispatch = useDispatch();
@@ -30,7 +30,7 @@ function AppContent() {
       <div className="min-h-screen bg-gray-50">
         <Sidebar currentUser={currentUser} />
 
-        <Header {...headerProps} />
+        <PageHeader {...headerProps} />
 
         <Flash />
 

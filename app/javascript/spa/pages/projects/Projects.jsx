@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from "react-redux";
-import { fetchProjects } from "../../spa/store/slices/projectsSlice";
-import { fetchClassifications } from "../store/slices/classificationsSlice";
-import ProjectsTable from '../../components/ProjectsTable';
-import { useHeader } from '../HeaderContext';
+import { fetchProjects } from "../../store/slices/projectsSlice";
+import { fetchClassifications } from "../../store/slices/classificationsSlice";
+import ProjectsTable from './ProjectsTable';
+import { useHeader } from '../../HeaderContext';
 
 const DUE_SOON_DAYS = 2;
 

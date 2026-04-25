@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { createProject, fetchProject, updateProject } from "../store/slices/projectsSlice";
-import { useHeader } from "../HeaderContext";
-import FormField from "../../components/forms/FormField";
-import MultiSelectDropDown from "../../components/forms/MultiSelectDropDown";
+import { createProject, fetchProject, updateProject } from "../../store/slices/projectsSlice";
+import { useHeader } from "../../HeaderContext";
+import { FormField, MultiSelectDropDown } from "../../../components/ui";
 import { useParams } from "react-router-dom";
-import ProjectBidForm from "../../components/ProjectBidForm";
-import { fetchContractors } from "../store/slices/contractorsSlice";
-import { fetchClassifications } from "../store/slices/classificationsSlice";
+import ProjectBidForm from "./ProjectBidForm";
+import { fetchContractors } from "../../store/slices/contractorsSlice";
+import { fetchClassifications } from "../../store/slices/classificationsSlice";
 
 export default function ProjectsForm() {
   const dispatch = useDispatch();

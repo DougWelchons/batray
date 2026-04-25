@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ContactsTableRow from "./ContactsTableRow";
-import { fetchContacts } from "../spa/store/slices/contactsSlice";
+import { fetchContacts } from "../../store/slices/contactsSlice";
 import { useDispatch, useSelector } from "react-redux";
 
 export default function ContactsTable({ contractorId }) {

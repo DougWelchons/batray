@@ -1,4 +1,4 @@
-import { useHeader } from '../HeaderContext';
+import { useHeader } from '../../HeaderContext';
 
 export default function BidSubmissions() {
   useHeader('Bid Submissions');
