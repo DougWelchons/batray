@@ -103,7 +103,7 @@ export default function ProjectsForm() {
       <div className="form__section">
         <div className="form__section-header">
           <h2 className="form__section-title">General Contractors</h2>
-          <Button type="button" variant="secondary" size="sm" onClick={addBid}>+ Add GC</Button>
+          <Button variant="secondary" size="sm" onClick={addBid}>+ Add GC</Button>
         </div>
 
         <Table>
@@ -116,7 +116,7 @@ export default function ProjectsForm() {
             </Table.Row>
           </Table.Head>
           <Table.Body>
-            {bids.length > 0 ? bids.map((bid, index) => (
+            {bids.length > 0 && bids.map((bid, index) => (
               <ProjectBidForm
                 key={bid.id || bid.tempId || index}
                 bid={bid}
@@ -131,8 +131,9 @@ export default function ProjectsForm() {
                 }}
                 removeBid={removeBid}
               />
-            )) :
-            <Table.Row><Table.Td>No bids added yet</Table.Td></Table.Row>}
+            ))}
+            <Table.Row><Table.Td onClick={addBid}><Button variant="secondary">+ Add GC</Button></Table.Td></Table.Row>
+
           </Table.Body>
         </Table>
         <div className="form__actions">
