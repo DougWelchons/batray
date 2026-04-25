@@ -3,17 +3,18 @@ import { useDispatch, useSelector } from "react-redux";
 import { createProject, fetchProject, updateProject } from "../../store/slices/projectsSlice";
 import { useHeader } from "../../HeaderContext";
 import { FormField, MultiSelectDropDown, Card, Button, Table } from "../../../components/ui";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ProjectBidForm from "./ProjectBidForm";
 import { fetchContractors } from "../../store/slices/contractorsSlice";
 import { fetchClassifications } from "../../store/slices/classificationsSlice";
 
 export default function ProjectsForm() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const {id} = useParams();
   const project = useSelector(state => id ? state.projects.items.find(p => p.id === id) : {});
   const defaultData = { id: "", name: "", street: "", city: "", state: "", zip_code: "", classification_ids: [], estimated_start_date: "" };
-  const defaultBidData = { contractor_id: "", contact_id: "", bid_due_at: "", submitted_value: "", fa: "", lv: "", status: "" };
+  const defaultBidData = { contractor_id: "", contact_id: "", bid_due_at: "" };
   const [formData, setFormData] = useState({ ...defaultData, ...project });
   const [bids, setBids] = useState(project?.bid_submissions ? project.bid_submissions.map(bid => ({ ...defaultBidData, ...bid })) : [{ ...defaultBidData, tempId: Date.now() }]);
   const contractors = useSelector(state => state.contractors.items);
@@ -53,7 +54,19 @@ export default function ProjectsForm() {
   };
 
   const handleSubmit = (e) => {
-    dispatch(project?.id ? updateProject({ id: project.id, projectData: formData }) : createProject(formData));
+    const bid_submissions_attributes = bids
+      .filter(bid => bid.contractor_id && (!bid.id || bid._dirty))
+      .map(({ tempId, _dirty, ...bid }) => bid);
+    const { id, name, street, city, state, zip_code, classification_ids, estimated_start_date, rebid_of_id } = formData;
+    const payload = { id, name, street, city, state, zip_code, classification_ids, estimated_start_date, rebid_of_id, bid_submissions_attributes };
+    const result = dispatch(project?.id ? updateProject({ id: project.id, projectData: payload }) : createProject(payload));
+    result.unwrap().then((res) => {
+      navigate(`/projects/${res.id}`);
+    });
+  }
+
+  const handleCancel = () => {
+    navigate(project?.id ? `/projects/${project.id}` : "/projects");
   }
 
   const removeBid = (id) => {
@@ -112,7 +125,7 @@ export default function ProjectsForm() {
                   const { name, value } = e.target;
                   setBids(prevBids => {
                     const newBids = [...prevBids];
-                    newBids[index] = { ...newBids[index], [name]: value };
+                    newBids[index] = { ...newBids[index], [name]: value, _dirty: true };
                     return newBids;
                   });
                 }}
@@ -122,6 +135,10 @@ export default function ProjectsForm() {
             <Table.Row><Table.Td>No bids added yet</Table.Td></Table.Row>}
           </Table.Body>
         </Table>
+        <div className="form__actions">
+          <Button onClick={handleSubmit}>{project?.id ? "Save" : "Create"}</Button>
+          <Button onClick={handleCancel} variant={"danger"}>Cancel</Button>
+        </div>
       </div>
     </Card>
   )

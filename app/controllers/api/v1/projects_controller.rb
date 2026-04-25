@@ -60,7 +60,11 @@ class Api::V1::ProjectsController < Api::V1::BaseController
       :project_type,
       :estimated_start_date,
       :rebid_of_id,
-      classification_ids: []
+      classification_ids: [],
+      bid_submissions_attributes: [
+        :id, :contractor_id, :contact_id, :bid_due_at, :submitted_value,
+        :awarded_value, :status, :notes, :_destroy
+      ]
     )
   end
 end
