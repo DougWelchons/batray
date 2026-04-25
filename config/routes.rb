@@ -5,7 +5,7 @@ Rails.application.routes.draw do
 
   # SPA catch-all (must be before legacy scope)
   get "/*path", to: "spa#index", as: :spa, constraints: ->(req) {
-    !req.path.start_with?("/legacy", "/api", "/rails", "/users")
+    !req.path.start_with?("/legacy", "/api", "/rails")
   }
 
   scope :legacy do
