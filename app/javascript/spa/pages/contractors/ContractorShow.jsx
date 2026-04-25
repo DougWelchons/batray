@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchContractor } from "../../store/slices/contractorsSlice";
-import { Card, StatCard, MetaList, MetaItem } from "../../../components/ui";
+import { Card, StatCard, MetaList, MetaItem, Button } from "../../../components/ui";
 import BidSubmissionsTable from "../../../components/shared/BidSubmissionsTable";
 import ContactsTable from "./ContactsTable";
 import { useHeader } from "../../HeaderContext";
@@ -15,7 +15,7 @@ export default function ContractorShow() {
   );
   const contacts = useSelector((state) => state.contacts.items.filter((contact) => contact.contractor_id === id));
 
-  useHeader(contractor?.name || '', <Link to={`/contractors/${id}/edit`} className="btn btn--ghost">Edit</Link>);
+  useHeader(contractor?.name || '', <Button as="link" to={`/contractors/${id}/edit`} variant="primary">Edit</Button>);
 
   useEffect(() => {
     dispatch(fetchContractor(id));

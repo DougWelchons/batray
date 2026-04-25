@@ -4,7 +4,7 @@ import { fetchProjects } from "../../store/slices/projectsSlice";
 import { fetchClassifications } from "../../store/slices/classificationsSlice";
 import ProjectsTable from './ProjectsTable';
 import { useHeader } from '../../HeaderContext';
-import { StatCard } from '../../../components/ui';
+import { StatCard, Button } from '../../../components/ui';
 
 const DUE_SOON_DAYS = 2;
 
@@ -13,7 +13,7 @@ export default function Projects() {
   const projects = useSelector(state => state.projects.items);
   const classifications = useSelector(state => state.classifications.items);
 
-  useHeader('Projects');
+  useHeader('Projects', <Button as="link" to="/projects/new" variant="primary">+ Add</Button>);
 
   useEffect(() => {
     dispatch(fetchProjects());

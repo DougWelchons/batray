@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProject } from "../../store/slices/projectsSlice";
 import { fetchClassifications } from "../../store/slices/classificationsSlice";
-import { Card, MetaList, MetaItem } from "../../../components/ui";
+import { Card, MetaList, MetaItem, Button } from "../../../components/ui";
 import BidSubmissionsTable from "../../../components/shared/BidSubmissionsTable";
 import { useHeader } from "../../HeaderContext";
 
@@ -21,7 +21,7 @@ export default function ProjectShow() {
     if (classifications.length === 0) dispatch(fetchClassifications());
   }, [dispatch, classifications.length]);
 
-  useHeader(project?.name || '');
+  useHeader(project?.name || '', <Button as="link" to={`/projects/${id}/edit`} variant="primary">Edit</Button>);
 
   const longDateFormat = (date) => {
     if (!date) return '-';
