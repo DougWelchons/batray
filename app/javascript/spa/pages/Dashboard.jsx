@@ -87,10 +87,26 @@ export default function Dashboard() {
   return (
     <div className="dashboard">
       <div className="stats-grid">
-        <StatCard label="Total Bids YTD" value="--" />
-        <StatCard label="Total Awarded YTD" value="--" />
-        <StatCard label="Win Rate %" value="--" />
-        <StatCard label="Dollar Win Rate %" value="--" />
+        <StatCard
+          label="Total Bids YTD"
+          value={analytics ? (analytics.stats?.total_bids_ytd ?? 0) : '--'}
+          info="Count of distinct projects with at least one submitted, awarded, or lost bid this calendar year. A project with multiple GC bids counts as one."
+        />
+        <StatCard
+          label="Total Awarded YTD"
+          value={analytics ? formatCurrency(analytics.stats?.total_awarded_ytd ?? 0) : '--'}
+          info="Sum of awarded_value for all bids with an award decision date in the current calendar year."
+        />
+        <StatCard
+          label="Win Rate"
+          value={analytics ? (analytics.stats?.win_rate != null ? `${analytics.stats.win_rate}%` : '—') : '--'}
+          info="Project-level win rate: awarded projects ÷ qualifying projects. Qualifying = submitted, awarded, or lost. Excludes drafting, withdrawn, and declined."
+        />
+        <StatCard
+          label="Dollar Win Rate"
+          value={analytics ? (analytics.stats?.dollar_win_rate != null ? `${analytics.stats.dollar_win_rate}%` : '—') : '--'}
+          info="Total awarded value ÷ total representative value. For won projects, representative value = awarded value. For others, it = average submitted value across GC bids."
+        />
       </div>
 
       <div className="charts-grid">

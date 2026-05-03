@@ -10,3 +10,4 @@ export { default as SearchableDropDown }  from "./SearchableDropDown";
 export { default as MultiSelectDropDown } from "./MultiSelectDropDown";
 export { MetaList, MetaItem }             from "./MetaList";
 export { default as Tag }                 from "./Tag";
+export { default as InfoTooltip }         from "./InfoTooltip";
