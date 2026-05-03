@@ -557,7 +557,6 @@ ul, ol { list-style: none; }
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: var(--space-5);
-  margin-bottom: var(--space-5);
 }
 
 .stat-card {
@@ -590,11 +589,47 @@ ul, ol { list-style: none; }
   margin-top: var(--space-1);
 }
 
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
 .charts-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--space-5);
-  margin-bottom: var(--space-5);
+}
+
+.chart-header {
+  margin-bottom: var(--space-4);
+}
+
+.chart-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  letter-spacing: -0.01em;
+}
+
+.chart-tooltip {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  padding: var(--space-2) var(--space-3);
+  box-shadow: var(--shadow-card);
+}
+
+.chart-tooltip__label {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-1);
+}
+
+.chart-tooltip__value {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-primary);
 }
 
 /* ===========================================================
@@ -839,4 +874,56 @@ ul, ol { list-style: none; }
   .stats-grid        { grid-template-columns: 1fr 1fr; }
   .form__row--cols-3 { grid-template-columns: 1fr; }
   .form__row--cols-2 { grid-template-columns: 1fr; }
+}
+
+/* ===========================================================
+   AUTH / LOGIN
+   =========================================================== */
+.auth-layout {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-bg);
+  padding: var(--space-5);
+}
+
+.auth-box {
+  width: 100%;
+  max-width: 380px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  padding: var(--space-7) var(--space-6);
+  box-shadow: var(--shadow-card);
+}
+
+.auth-box__brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: var(--space-6);
+}
+
+.auth-box__brand-name {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  letter-spacing: -0.02em;
+}
+
+.auth-box__brand-sub {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  margin-top: 2px;
+}
+
+.auth-box__remember {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.auth-box__remember .form__checkbox-label {
+  font-size: 13px;
 }

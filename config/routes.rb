@@ -47,6 +47,7 @@ Rails.application.routes.draw do
       resources :contacts, only: [ :create, :update, :destroy ]
       resources :bid_submissions, only: [ :index, :show, :create, :update, :destroy ]
       resources :classifications, only: [ :index ]
+      get "analytics/dashboard", to: "analytics#dashboard"
     end
   end
 

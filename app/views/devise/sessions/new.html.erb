@@ -1,0 +1,33 @@
+<div class="auth-layout">
+  <div class="auth-box">
+    <div class="auth-box__brand">
+      <span class="auth-box__brand-name">Batray</span>
+      <span class="auth-box__brand-sub">Bid Tracker</span>
+    </div>
+
+    <%= render "shared/flash" %>
+
+    <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { "data-turbo": "false" }) do |f| %>
+      <div class="form__field">
+        <%= f.label :email, "Email", class: "form__label" %>
+        <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "form__input", placeholder: "you@company.com" %>
+      </div>
+
+      <div class="form__field" style="margin-top: var(--space-4);">
+        <%= f.label :password, "Password", class: "form__label" %>
+        <%= f.password_field :password, autocomplete: "current-password", class: "form__input", placeholder: "••••••••" %>
+      </div>
+
+      <% if devise_mapping.rememberable? %>
+        <div class="auth-box__remember" style="margin-top: var(--space-3);">
+          <%= f.check_box :remember_me, class: "form__checkbox" %>
+          <%= f.label :remember_me, "Remember me", class: "form__checkbox-label" %>
+        </div>
+      <% end %>
+
+      <div style="margin-top: var(--space-5);">
+        <%= f.submit "Sign in", class: "btn btn--primary", style: "width: 100%; justify-content: center;" %>
+      </div>
+    <% end %>
+  </div>
+</div>
