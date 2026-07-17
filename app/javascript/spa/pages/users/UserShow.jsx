@@ -10,7 +10,7 @@ import { fetchProjects } from '../../store/slices/projectsSlice';
 export default function UserShow() {
   const dispatch = useDispatch()
   const { id } = useParams();
-  const projects = useSelector(state => state.projects.items.filter(p => p.user_id === id));
+  const projects = useSelector(state => state.projects.items.filter(p => p.estimators_ids.includes(id)));
   const user = useSelector(state => state.users.items.find(u => u.id === id));
 
   useHeader(user ? user.name : 'User');
@@ -30,7 +30,7 @@ export default function UserShow() {
         <p>Email: {user?.email}</p>
         {/* Add more user details as needed */}
       </Card>
-      <ProjectsTable />
+      <ProjectsTable projects={projects} />
     </>
   );
 }

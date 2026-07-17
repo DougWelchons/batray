@@ -14,6 +14,10 @@ class Project < ApplicationRecord
   validates :name, presence: true
   validates :company_id, presence: true
 
+  def estimators_ids
+    bid_submissions.pluck(:user_id).compact.uniq
+  end
+
   def earliest_bid_due_at
     if association(:bid_submissions).loaded?
       bid_submissions.map(&:bid_due_at).compact.min
