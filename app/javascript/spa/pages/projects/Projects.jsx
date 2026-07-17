@@ -34,7 +34,7 @@ export default function Projects() {
         <StatCard label="Bids Due in Next 2 Days" value={bidsDueSoonCount} />
         <StatCard label="Projects with Overdue Bids" value={bidsOverdueCount} />
       </div>
-      <ProjectsTable />
+      <ProjectsTable projects={projects} />
     </>
   );
 }

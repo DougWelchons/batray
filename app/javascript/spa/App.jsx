@@ -16,6 +16,7 @@ import Sidebar from '../components/layout/Sidebar';
 import Flash from '../components/layout/Flash';
 import { PageHeader } from '../components/ui';
 import Users from './pages/users/Users';
+import UserShow from './pages/users/UserShow';
 
 function AppContent() {
   const dispatch = useDispatch();
@@ -46,7 +47,8 @@ function AppContent() {
             <Route path="/contractors/new" element={<ContractorsForm />} />
             <Route path="/contractors/:id" element={<ContractorShow />} />
             <Route path="/contractors/:id/edit" element={<ContractorsForm />} />
-            <Route path="/Users" element={<Users />} />
+            <Route path="/users" element={<Users />} />
+            <Route path="/users/:id" element={<UserShow />} />
             <Route path="/bids" element={<BidSubmissions />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

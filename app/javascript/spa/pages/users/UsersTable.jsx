@@ -1,5 +1,6 @@
 import React from "react";
 import { Button, Table, Tag } from "../../../components/ui";
+import { Link } from "react-router-dom";
 
 export default function UsersTable({ users = [] }) {
   return (
@@ -15,7 +16,9 @@ export default function UsersTable({ users = [] }) {
       <Table.Body>
         {users.map(user => (
           <Table.Row key={user.id}>
-            <Table.Td>{user.name}</Table.Td>
+            <Table.Td>
+              <Link to={`/users/${user.id}`}>{user.name}</Link>
+            </Table.Td>
             <Table.Td>{user.email}</Table.Td>
             <Table.Td><Tag>{user.role}</Tag></Table.Td>
             <Table.Td>

@@ -3,8 +3,8 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { Card, Table, Tag, Button, EmptyState } from "../../../components/ui";
 
-export default function ProjectsTable() {
-  const projects = useSelector(state => state.projects.items);
+export default function ProjectsTable({ projects }) {
+  // const projects = useSelector(state => state.projects.items);
   const classifications = useSelector(state => state.classifications.items);
   const [sortColumn, setSortColumn] = useState("bid_due_at");
   const [sortDirection, setSortDirection] = useState("desc");
