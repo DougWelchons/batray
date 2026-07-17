@@ -44,7 +44,7 @@ export default function BidSubmissionsTable({
             {displayContractor && <Table.Td>{bid.contractor_name}</Table.Td>}
             <Table.Td>{bid.contact_name}</Table.Td>
             <Table.Td><StatusBadge status={bid.status} /></Table.Td>
-            <Table.Td>{new Date(bid.bid_due_at).toLocaleDateString()}</Table.Td>
+            <Table.Td>{new Date(bid.bid_due_at).toLocaleDateString('en-US', { timeZone: 'UTC' })}</Table.Td>
             <Table.Td right>{formatCurrency(bid.submitted_value)}</Table.Td>
             <Table.Td right>{formatCurrency(bid.awarded_value)}</Table.Td>
             {displayEstimator && <Table.Td>{bid.estimators_name}</Table.Td>}

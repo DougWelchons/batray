@@ -11,7 +11,7 @@ export default function ProjectsTable({ projects }) {
 
   const formatDate = (dateString) => {
     if (!dateString) return null;
-    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+    const options = { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' };
     return new Date(dateString).toLocaleDateString(undefined, options);
   }
 
