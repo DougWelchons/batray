@@ -44,6 +44,7 @@
   --space-7: 48px;
 
   --sidebar-width:    240px;
+  --sidebar-closed-width:    60px;
   --header-height:    56px;
   --page-padding:     24px;
   --card-padding:     20px;
@@ -112,6 +113,29 @@ ul, ol { list-style: none; }
   top: 0; left: 0; bottom: 0;
   overflow-y: auto;
   z-index: 100;
+  transition: width 0.2s ease;
+}
+
+.sidebar--closed {
+  width: var(--sidebar-closed-width);
+}
+
+.sidebar--closed .sidebar__brand {
+  padding: 0;
+  justify-content: center;
+}
+
+.sidebar--closed .sidebar__toggle {
+  margin-left: 0;
+}
+
+.sidebar--closed .sidebar__nav li {
+  padding: 0 var(--space-2);
+}
+
+.sidebar--closed .sidebar__nav-item {
+  justify-content: center;
+  padding: var(--space-2);
 }
 
 .sidebar__brand {
@@ -164,10 +188,77 @@ ul, ol { list-style: none; }
 
 .sidebar__icon { width: 18px; height: 18px; flex-shrink: 0; }
 
+.sidebar__toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--space-2);
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--border-radius);
+  transition: background-color 0.15s, color 0.15s;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.sidebar__toggle:hover {
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+}
+
+.sidebar__toggle svg {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.2s ease;
+}
+
+.sidebar--closed .sidebar__toggle svg {
+  transform: rotate(180deg);
+}
+
 .sidebar__footer {
   padding: var(--space-4) var(--space-5);
   border-top: 1px solid var(--color-border);
   flex-shrink: 0;
+}
+
+.sidebar--closed .sidebar__footer {
+  padding: var(--space-3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.sidebar__user-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--border-radius);
+  color: var(--color-text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.sidebar__user-button:hover {
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+}
+
+.sidebar-user-popup {
+  position: fixed;
+  z-index: 400;
+  min-width: 160px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 12px rgba(42, 38, 35, 0.10);
+  padding: var(--space-1) 0;
+  overflow: hidden;
 }
 
 .sidebar__user-info { margin-bottom: var(--space-3); }
@@ -187,7 +278,8 @@ ul, ol { list-style: none; }
 }
 
 .app-main { flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
-.app-main--with-sidebar { margin-left: var(--sidebar-width); }
+.app-main--with-sidebar { margin-left: var(--sidebar-width); transition: margin-left 0.2s ease; }
+.app-main--with-sidebar.app-main--sidebar-closed { margin-left: var(--sidebar-closed-width); }
 
 .top-header {
   height: var(--header-height);
@@ -880,7 +972,107 @@ ul, ol { list-style: none; }
 }
 
 /* ===========================================================
-   15. MULTI-SELECT CHIPS
+   15. DROPDOWN MENU
+   =========================================================== */
+.dropdown-menu { position: relative; display: inline-block; }
+
+.dropdown-menu__panel {
+  position: absolute;
+  top: calc(100% + 4px);
+  z-index: 300;
+  min-width: 160px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 12px rgba(42, 38, 35, 0.10);
+  padding: var(--space-1) 0;
+  overflow: hidden;
+}
+
+/* align: panel opens below trigger */
+.dropdown-menu__panel--left  { left: 0; }
+.dropdown-menu__panel--right { right: 0; }
+
+/* direction: panel opens to the right of trigger */
+.dropdown-menu__panel--direction-right {
+  top: 0;
+  left: calc(100% + 4px);
+}
+
+/* header item — non-interactive label inside the panel */
+.dropdown-menu__header {
+  padding: var(--space-2) var(--space-4);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: default;
+  user-select: none;
+}
+
+.dropdown-menu__header--name {
+  font-size: 13px;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--color-text-primary);
+}
+
+.dropdown-menu__header--role {
+  font-size: 12px;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--color-text-muted);
+  padding-top: 0;
+}
+
+.dropdown-menu__item {
+  display: block;
+  width: 100%;
+  padding: var(--space-2) var(--space-4);
+  font-family: var(--font-family);
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--color-text-primary);
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.1s;
+  white-space: nowrap;
+}
+
+.dropdown-menu__item:hover,
+.dropdown-menu__item--highlighted {
+  background-color: var(--color-surface-alt);
+  color: var(--color-text-primary);
+  text-decoration: none;
+}
+
+.dropdown-menu__item--danger { color: var(--status-lost); }
+.dropdown-menu__item--danger:hover,
+.dropdown-menu__item--danger.dropdown-menu__item--highlighted {
+  background-color: var(--status-lost-bg);
+  color: var(--status-lost);
+}
+
+.dropdown-menu__item--disabled {
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.dropdown-menu__divider {
+  height: 1px;
+  background-color: var(--color-border);
+  margin: var(--space-1) 0;
+}
+
+/* ===========================================================
+   16. MULTI-SELECT CHIPS
    =========================================================== */
 .multiselect-trigger {
   height: auto;

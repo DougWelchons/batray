@@ -11,3 +11,4 @@ export { default as MultiSelectDropDown } from "./MultiSelectDropDown";
 export { MetaList, MetaItem }             from "./MetaList";
 export { default as Tag }                 from "./Tag";
 export { default as InfoTooltip }         from "./InfoTooltip";
+export { default as DropdownMenu }        from "./DropdownMenu";
