@@ -3,7 +3,7 @@
 
 # This Dockerfile is designed for production, not development. Use with Kamal or build'n'run by hand:
 # docker build -t batray .
-# docker run -d -p 80:80 -e RAILS_MASTER_KEY=<value from config/master.key> --name batray batray
+# docker run -d -p 3000:3000 -e RAILS_MASTER_KEY=<value from config/master.key> --name batray batray
 
 # For a containerized dev environment, see Dev Containers: https://guides.rubyonrails.org/getting_started_with_devcontainer.html
 
@@ -35,6 +35,12 @@ RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y build-essential git libpq-dev libyaml-dev pkg-config && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
+# Install Node.js 20 LTS for esbuild and Tailwind CSS asset compilation
+ARG NODE_VERSION=20
+RUN curl -fsSL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash - && \
+    apt-get install --no-install-recommends -y nodejs && \
+    rm -rf /var/lib/apt/lists /var/cache/apt/archives
+
 # Install application gems
 COPY vendor/* ./vendor/
 COPY Gemfile Gemfile.lock ./
@@ -44,8 +50,15 @@ RUN bundle install && \
     # -j 1 disable parallel compilation to avoid a QEMU bug: https://github.com/rails/bootsnap/issues/495
     bundle exec bootsnap precompile -j 1 --gemfile
 
+# Install Node dependencies
+COPY package*.json ./
+RUN npm ci
+
 # Copy application code
 COPY . .
+
+# Build JavaScript bundles (esbuild) and CSS (Tailwind)
+RUN npm run build:all && npm run build:css
 
 # Precompile bootsnap code for faster boot times.
 # -j 1 disable parallel compilation to avoid a QEMU bug: https://github.com/rails/bootsnap/issues/495
@@ -53,8 +66,6 @@ RUN bundle exec bootsnap precompile -j 1 app/ lib/
 
 # Precompiling assets for production without requiring secret RAILS_MASTER_KEY
 RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
-
-
 
 
 # Final stage for app image
@@ -72,6 +83,8 @@ COPY --chown=rails:rails --from=build /rails /rails
 # Entrypoint prepares the database.
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]
 
-# Start server via Thruster by default, this can be overwritten at runtime
-EXPOSE 80
+# Port 3000 matches the homelab DEFAULT_RAILS_PORT so Traefik routes correctly.
+# Thruster reads the PORT env var for its listening port (default is 80).
+ENV PORT=3000
+EXPOSE 3000
 CMD ["./bin/thrust", "./bin/rails", "server"]
