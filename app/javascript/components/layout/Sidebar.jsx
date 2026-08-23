@@ -87,7 +87,10 @@ export default function Sidebar({ currentUser }) {
   const openUserMenu = () => {
     if (userMenuButtonRef.current) {
       const rect = userMenuButtonRef.current.getBoundingClientRect();
-      setUserMenuPos({ top: rect.top, left: rect.right + 8 });
+      setUserMenuPos({
+        bottom: window.innerHeight - rect.bottom,
+        left: rect.right + 8,
+      });
     }
     setUserMenuOpen((o) => !o);
   };
@@ -177,7 +180,7 @@ export default function Sidebar({ currentUser }) {
             <div
               ref={userMenuPanelRef}
               className="sidebar-user-popup"
-              style={{ top: userMenuPos.top, left: userMenuPos.left }}
+              style={{ bottom: userMenuPos.bottom, left: userMenuPos.left }}
             >
               <div className="dropdown-menu__header dropdown-menu__header--name">
                 {currentUser?.name || "User"}
